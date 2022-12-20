@@ -16,3 +16,18 @@ build_singularity_container:
 
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
+
+
+###############################################################################
+run_hpc_cluster:
+  image: python:latest
+
+  stage: test
+
+  needs: ["build_singularity_container"]
+
+  before_script:
+    - pip install hpc-rocket
+
+  script:
+    - hpc-rocket launch --watch rocket.yml

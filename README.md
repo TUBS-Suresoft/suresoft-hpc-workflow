@@ -59,6 +59,7 @@ As a result the executables will write [UCD](https://dav.lbl.gov/archive/NERSC/S
 ### .gitlab-ci.yml
 1. builds singularity image basesd on Containers/rockylinux9-mpich.def
 2. copy image with hpc-rocket to cluster (rocket.yml) and submit slurm job (laplace.job)
+   - before add REMOTE_HOST, REMOTE_USER and REMOTE_PASSWORD (or PRIVATE_KEY) according to variable names in rocket.yml to gitlab CI project settings
 
 ### Containers/rockylinux9-mpich.def
 - defines singularity image
@@ -72,3 +73,5 @@ As a result the executables will write [UCD](https://dav.lbl.gov/archive/NERSC/S
 ### laplace.job
 - slurm settings
 - executes singularity image
+
+

@@ -1,0 +1,23 @@
+host: $REMOTE_HOST
+user: $REMOTE_USER
+password: $REMOTE_PASSWORD
+
+copy:
+  - from: ./laplace.job
+    to: ./laplace2d/laplace.job
+    overwrite: true
+
+  - from: ./Containers/rockylinux9-mpich.sif
+    to: ./laplace2d/rockylinux9-mpich.sif
+    overwrite: true
+
+collect:
+  - from: ./laplace2d/laplace.out
+    to: ./laplace.out
+    overwrite: true
+
+clean:
+  - ./laplace2d/*
+
+sbatch: ./laplace2d/laplace.job
+continue_if_job_fails: true
