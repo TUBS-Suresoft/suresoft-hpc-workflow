@@ -269,7 +269,7 @@ int main(int argc, char **argv)
         //Allreduce = reduce + broadcast
         MPI_Allreduce(&err, &err_global, 1, MPI_DOUBLE,
                       MPI_SUM, MPI_COMM_WORLD);
-        done = (err_global < 1.0e-4);
+        done = (err_global < 1.0e-3);
 
         iteration++;
         if (myRank == 0 && (iteration % parameter.outputInterval == 0))

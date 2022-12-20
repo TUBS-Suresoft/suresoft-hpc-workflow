@@ -12,9 +12,10 @@ copy:
     overwrite: true
 
 collect:
-  - from: ./laplace2d/laplace.out
-    to: ./laplace.out
+  - from: ./laplace2d/results/*
+    to: ./results
     overwrite: true
+
 
 clean:
   - ./laplace2d/*

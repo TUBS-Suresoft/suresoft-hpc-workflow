@@ -6,3 +6,5 @@ TempOutput.inp
 .DS_Store
 
 *.sif
+
+results/
