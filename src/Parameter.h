@@ -15,7 +15,7 @@ struct SimulationParameter
 
     size_t outputInterval = 1000;
 
-    const char* outputFileName = "../results/TemperatureField.inp";
+    const char* outputFileName = "results/TemperatureField.inp";
 };
 
 #endif
