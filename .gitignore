@@ -4,3 +4,5 @@ build/
 
 TempOutput.inp
 .DS_Store
+
+*.sif

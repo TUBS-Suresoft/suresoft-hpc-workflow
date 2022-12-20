@@ -13,4 +13,9 @@ echo "SLURM_TASKS_PER_NODE"=$SLURM_TASKS_PER_NODE
 echo "working directory = "$SLURM_SUBMIT_DIR
 echo ""
 
-mpirun -np 4 ./build/bin/Laplace2D_mpi_blocking
+source $HOME/.bashrc
+module load singularity/3.9.9
+
+cd laplace2d
+
+srun singularity run --app testcase MPICHCentOS.sif
