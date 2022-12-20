@@ -31,7 +31,7 @@ run_hpc_cluster:
 
   script:
     - hpc-rocket launch --watch rocket.yml
-    - cat results/laplace.log
+    - cat results/laplace.out
 
   artifacts:
     expire_in: 1 hrs

@@ -16,7 +16,7 @@ collect:
     to: ./results
     overwrite: true
 
-  - from: ./laplace2d/laplace.log
+  - from: ./laplace2d/laplace.out
     to: ./results
     overwrite: true
 
