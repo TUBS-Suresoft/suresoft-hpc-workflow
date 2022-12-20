@@ -1,0 +1,6 @@
+build/
+
+.vscode/
+
+TempOutput.inp
+.DS_Store
