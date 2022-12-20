@@ -1,11 +1,11 @@
 BootStrap: docker
 From: rockylinux:9
+Stage: build
  
 %files
     src src
     tests tests
     CMakeLists.txt CMakeLists.txt
-
 
 %post
     yum update -y                            && \
@@ -18,6 +18,18 @@ From: rockylinux:9
     module load mpi                          && \
     mkdir build && cd build && cmake .. && make
 
+
+BootStrap: docker
+From: rockylinux:9
+Stage: runtime
+
+%files from build
+    build build
+
+%post
+    yum update -y                            && \
+    yum install -y                              \
+    mpich
 
 %apprun laplace
     /build/bin/laplace
