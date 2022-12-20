@@ -1,0 +1,18 @@
+build_singularity_container:
+  image: 
+    name: quay.io/singularity/singularity:v3.10.4
+    entrypoint: [""]
+
+  stage: build
+
+  tags:
+    - linux
+    - privileged
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - Containers/rockylinux9-mpich.sif
+
+  script:
+    - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
