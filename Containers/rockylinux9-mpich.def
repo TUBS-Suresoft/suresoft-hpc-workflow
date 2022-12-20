@@ -8,17 +8,16 @@ From: rockylinux:9
 
 
 %post
-    yum update -y                           && \
+    yum update -y                            && \
     yum group install -y "Development Tools" && \
-    yum install -y                             \
-    mpich-devel                             && \
-    cmake                                   && \
-    source /etc/profile.d/modules.sh        && \
-    module load mpi                         && \
+    yum install -y                              \
+    mpich                                       \
+    mpich-devel                                 \
+    cmake                                    && \
+    source /etc/profile.d/modules.sh         && \
+    module load mpi                          && \
     mkdir build && cd build && cmake .. && make
 
 
 %apprun laplace
-    source /etc/profile.d/modules.sh
-    module load mpi
-    mpirun -np 4 /build/bin/laplace
+    /build/bin/laplace

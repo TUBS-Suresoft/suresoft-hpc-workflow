@@ -46,3 +46,29 @@ or
 As a result the executables will write [UCD](https://dav.lbl.gov/archive/NERSC/Software/express/help6.1/help/reference/dvmac/UCD_Form.htm) files into the build directory. Those files can be viewed with e.g. [Paraview](https://www.paraview.org/).
 
 ![VirtualFluids](img/laplace2d.png)
+
+
+
+
+
+## Prerequiste
+-  priviliged gitlab runner available in project
+
+
+## Actors
+### .gitlab-ci.yml
+1. builds singularity image basesd on Containers/rockylinux9-mpich.def
+2. copy image with hpc-rocket to cluster (rocket.yml) and submit slurm job (laplace.job)
+
+### Containers/rockylinux9-mpich.def
+- defines singularity image
+- defines executing of laplace binary
+
+### rocket.yml
+- defines files to copy to cluster
+- defines result files to copy back to gitlab
+- defines slurm job file to submit
+
+### laplace.job
+- slurm settings
+- executes singularity image
