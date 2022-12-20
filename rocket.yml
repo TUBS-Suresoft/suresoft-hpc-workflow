@@ -16,6 +16,10 @@ collect:
     to: ./results
     overwrite: true
 
+  - from: ./laplace2d/laplace.log
+    to: ./results
+    overwrite: true
+
 
 clean:
   - ./laplace2d/*
