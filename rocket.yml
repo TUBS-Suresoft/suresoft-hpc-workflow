@@ -21,8 +21,8 @@ collect:
     overwrite: true
 
 
-clean:
-  - laplace2d/*
+#clean:
+#  - laplace2d/*
 
 sbatch: laplace2d/laplace.job
 continue_if_job_fails: true
