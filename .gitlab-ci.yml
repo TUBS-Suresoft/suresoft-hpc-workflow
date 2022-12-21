@@ -61,7 +61,7 @@ regression_test:
   needs: ["run_hpc_cluster"]
 
   before_script:
-    - pip install git+https://gitlab.com/dglaeser/fieldcompare
+    - pip install "git+https://gitlab.com/dglaeser/fieldcompare#egg=fieldcompare[all]"
 
   script:
     - fieldcompare file results/TemperatureField.avs --reference reference_data/TemperatureField.avs
