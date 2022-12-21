@@ -4,7 +4,6 @@ Stage: build
  
 %files
     src src
-    tests tests
     CMakeLists.txt CMakeLists.txt
 
 %post
