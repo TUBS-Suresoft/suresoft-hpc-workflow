@@ -20,11 +20,9 @@ build_singularity_container:
       - Containers/rockylinux9-mpich.sif
 
   cache:
-    key: 
-      files: 
-        - Containers/rockylinux9-mpich.def
+    key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - Containers
+      - Containers/
 
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
@@ -32,7 +30,7 @@ build_singularity_container:
 
 ###############################################################################
 run_hpc_cluster:
-  image: python:latest
+  image: python:3.10
 
   stage: simulation
 
@@ -54,7 +52,7 @@ run_hpc_cluster:
 
 ###############################################################################
 regression_test:
-  image: python:latest
+  image: python:3.10
 
   stage: test
 
