@@ -4,6 +4,7 @@ build/
 
 TempOutput.inp
 .DS_Store
+.venv/
 
 *.sif
 

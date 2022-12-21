@@ -14,6 +14,13 @@ build_singularity_container:
     paths:
       - Containers/rockylinux9-mpich.sif
 
+  cache:
+    key: 
+      files: 
+        - Containers/rockylinux9-mpich.def
+    paths:
+      - Containers
+
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
@@ -37,3 +44,19 @@ run_hpc_cluster:
     expire_in: 1 hrs
     paths:
       - results/
+
+
+
+###############################################################################
+regression_test:
+  image: python:latest
+
+  stage: test
+
+  needs: ["run_hpc_cluster"]
+
+  before_script:
+    - pip install git+https://gitlab.com/dglaeser/fieldcompare
+
+  script:
+    - fieldcompare file results/TemperatureField.avs --reference reference_data/TemperatureField.avs
