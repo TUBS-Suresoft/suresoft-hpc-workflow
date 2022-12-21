@@ -1,3 +1,8 @@
+stages:
+  - build
+  - simulation
+  - test
+
 build_singularity_container:
   image: 
     name: quay.io/singularity/singularity:v3.10.4
@@ -29,7 +34,7 @@ build_singularity_container:
 run_hpc_cluster:
   image: python:latest
 
-  stage: test
+  stage: simulation
 
   needs: ["build_singularity_container"]
 
