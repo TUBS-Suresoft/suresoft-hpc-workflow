@@ -3,6 +3,13 @@ stages:
   - simulation
   - test
 
+
+###############################################################################
+# 1. builds the singularity container using a docker container
+# Needs a priviliged gitlab runner.
+# Input: Containers/rockylinux9-mpich.def
+# Output: Containers/rockylinux9-mpich.sif
+###############################################################################
 build_singularity_container:
   image: 
     name: quay.io/singularity/singularity:v3.10.4
@@ -27,7 +34,11 @@ build_singularity_container:
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
-
+###############################################################################
+# 2. runs the container on the hpc cluster using hpc-rocket
+# rocket.yml used the configuration file rocket.yml, copies the defined data
+# to the cluster, submits a slurm job and copies data back
+# Output: result data located in results/
 ###############################################################################
 run_hpc_cluster:
   image: python:3.10
@@ -49,7 +60,10 @@ run_hpc_cluster:
       - results/
 
 
-
+###############################################################################
+# 3. runs a regression data using fieldcompare
+# Fieldcompare compares the in the last job produced data from results/
+# with a set of reference files located in reference_data/
 ###############################################################################
 regression_test:
   image: python:3.10
