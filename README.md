@@ -4,6 +4,9 @@
 [![pipeline status](https://git.rz.tu-bs.de/soe.peters/suresoft-hpc-workflow/badges/main/pipeline.svg)](https://git.rz.tu-bs.de/soe.peters/suresoft-hpc-workflow/-/commits/main)
 
 
+[<img src="img/SURESOFT-Logo.png" width="250"/>](img/SURESOFT-Logo.png)
+
+
 ## Introduction
 This project includes an application of a 2D Laplace heat transfer in a plate. It is developed as a showcase for the [SURESOFT](https://www.tu-braunschweig.de/suresoft) workflow addressing reproducibility on HPC platforms. This workflow shows how to automatically deploy containers to clusters and verify the results using continuous integration.
 
