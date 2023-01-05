@@ -76,4 +76,4 @@ regression_test:
     - pip install "git+https://gitlab.com/dglaeser/fieldcompare#egg=fieldcompare[all]"
 
   script:
-    - fieldcompare file results/TemperatureField.avs --reference reference_data/TemperatureField.avs
+    - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
