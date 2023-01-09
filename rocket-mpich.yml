@@ -3,20 +3,20 @@ user: $REMOTE_USER
 password: $REMOTE_PASSWORD
 
 copy:
-  - from: laplace.job
-    to: laplace2d/laplace.job
+  - from: laplace-mpich.job
+    to: laplace2d-mpich/laplace.job
     overwrite: true
 
   - from: Containers/rockylinux9-mpich.sif
-    to: laplace2d/rockylinux9-mpich.sif
+    to: laplace2d-mpich/rockylinux9-mpich.sif
     overwrite: true
 
 collect:
-  - from: laplace2d/results/*
+  - from: laplace2d-mpich/results/*
     to: results
     overwrite: true
 
-  - from: laplace2d/laplace.out
+  - from: laplace2d-mpich/laplace.out
     to: results
     overwrite: true
 
@@ -24,5 +24,5 @@ collect:
 #clean:
 #  - laplace2d/*
 
-sbatch: laplace2d/laplace.job
+sbatch: laplace2d-mpich/laplace.job
 continue_if_job_fails: true

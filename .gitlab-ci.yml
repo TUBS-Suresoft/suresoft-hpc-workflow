@@ -10,7 +10,7 @@ stages:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build_singularity_container:
+build_singularity_container_mpich:
   image: 
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -70,7 +70,7 @@ build_singularity_container_openmpi:
 # to the cluster, submits a slurm job and copies data back
 # Output: result data located in results/
 ###############################################################################
-run_hpc_cluster:
+run_hpc_cluster_mpich:
   image: python:3.10
 
   stage: simulation
@@ -114,6 +114,30 @@ run_hpc_cluster_openmpi:
     paths:
       - results/
 
+###############################################################################
+# 2. runs the container on the hpc cluster using hpc-rocket
+# rocket.yml used the configuration file rocket.yml, copies the defined data
+# to the cluster, submits a slurm job and copies data back
+# Output: result data located in results/
+###############################################################################
+run_hpc_cluster_native:
+  image: python:3.10
+
+  stage: simulation
+
+  needs: []
+
+  before_script:
+    - pip install hpc-rocket==0.3.0
+
+  script:
+    - hpc-rocket launch --watch rocket-native.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
 
 
 ###############################################################################
@@ -135,26 +159,3 @@ regression_test:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
 
 
-
-
-###############################################################################
-# 
-###############################################################################
-run_native_hpc_cluster:
-  image: python:3.10
-
-  stage: simulation
-
-  needs: []
-
-  before_script:
-    - pip install hpc-rocket==0.3.0
-
-  script:
-    - hpc-rocket launch --watch rocket-native.yml
-    - cat results/laplace.out
-
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - results/

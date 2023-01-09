@@ -5,7 +5,7 @@
 #SBATCH --time=00:10:00
 #SBATCH --job-name=Laplace2D
 #SBATCH --ntasks-per-node=1
-#SBATCH --output=laplace2d/laplace.out
+#SBATCH --output=laplace2d-mpich/laplace.out
 
 echo "SLURM_JOBID="$SLURM_JOBID
 echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST
@@ -19,7 +19,7 @@ module load singularity/3.9.9
 module load mpi/mpich/mpich_3.4.2
 module list
 
-cd laplace2d
+cd laplace2d-mpich
 mkdir -p results
 
 # srun --mpi=pmi2 singularity run --app laplace rockylinux9-mpich.sif
