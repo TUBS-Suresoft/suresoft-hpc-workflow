@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
 #include <mpi.h>
 
@@ -17,18 +18,24 @@ int main(int argc, char **argv)
     // The fixed number of partitions in x an y direction, e.g. 2x2 = 4
     // The total number of processes has to match the call of mpirun. 
     // In this case: mpirun -np 4 ./Laplace_mpi
-    constexpr int numPartsX = 2; 
-    constexpr int numPartsY = 2;
 
-    constexpr int localNx = parameter.gridNx / numPartsX; //division using integers -> not precise
-    constexpr int localNy = parameter.gridNy / numPartsY;
+    if (argc < 3) {
+        std::cout << "Usage: mpirun -np <numPartsX * numPartsY> ./Laplace_mpi <numPartsX> <numPartsY>" << std::endl;
+        return 1;
+    }
+
+    const int numPartsX = std::stoi(argv[1]);
+    const int numPartsY = std::stoi(argv[2]);
+
+    const int localNx = parameter.gridNx / numPartsX; //division using integers -> not precise
+    const int localNy = parameter.gridNy / numPartsY;
 
     // -> hence, we calculate the effective numbers again
     // we need the numbers to collect all data in the end.
-    constexpr int realGridNx = localNx * numPartsX;
-    constexpr int realGridNy = localNy * numPartsY;
+    const int realGridNx = localNx * numPartsX;
+    const int realGridNy = localNy * numPartsY;
 
-    constexpr Mapper2D innerGrid(localNx, localNy);
+    const Mapper2D innerGrid(localNx, localNy);
  
     /* do parallelisation from here on ... */
     int numProcs, myRank;
@@ -37,12 +44,16 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
-    constexpr Mapper2D processTopology = Mapper2D(numPartsX, numPartsY);
+    std::cout << "Process " << myRank << ". App runs with processes: " << numProcs << " [" << numPartsX << " x " << numPartsY << "]\n";
+    
+    assert(numProcs == numPartsX * numPartsY);
+
+    const Mapper2D processTopology = Mapper2D(numPartsX, numPartsY);
     int myRankX = processTopology.xForPos(myRank);
     int myRankY = processTopology.yForPos(myRank);
 
     // The entire grid has a ghost layer on each side.
-    constexpr Mapper2D entireGrid(innerGrid.nx() + 2, innerGrid.ny() + 2);
+    const Mapper2D entireGrid(innerGrid.nx() + 2, innerGrid.ny() + 2);
 
     /* receive buffers for ghost layer data */
     double *leftReceiveBuffer   = new double[innerGrid.ny()];
@@ -303,7 +314,7 @@ int main(int argc, char **argv)
             for (int partY = 0; partY < numPartsY; partY++)
                 if (partX || partY) //if (!(i==0 && j==0)
                 {
-                    std::cout << "Partition X = " << partX << ", Partition Y = " << partY << std::endl;
+                    // std::cout << "Partition X = " << partX << ", Partition Y = " << partY << std::endl;
                     for (size_t y = 0; y < entireGrid.ny() - 2; y++) // line by line
                         MPI_Recv(resultData + globalGrid.pos(partX * localNx, partY * localNy + y), entireGrid.nx() - 2, MPI_DOUBLE, processTopology.pos(partX, partY), 0, MPI_COMM_WORLD, &status);
                 }
