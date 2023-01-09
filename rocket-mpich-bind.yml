@@ -1,0 +1,28 @@
+host: $REMOTE_HOST
+user: $REMOTE_USER
+password: $REMOTE_PASSWORD
+
+copy:
+  - from: laplace-mpich-bind.job
+    to: laplace2d-mpich-bind/laplace.job
+    overwrite: true
+
+  - from: Containers/rockylinux9-mpich-bind.sif
+    to: laplace2d-mpich-bind/rockylinux9-mpich-bind.sif
+    overwrite: true
+
+collect:
+  - from: laplace2d-mpich-bind/results/*
+    to: results
+    overwrite: true
+
+  - from: laplace2d-mpich-bind/laplace.out
+    to: results
+    overwrite: true
+
+
+#clean:
+#  - laplace2d/*
+
+sbatch: laplace2d-mpich-bind/laplace.job
+continue_if_job_fails: true
