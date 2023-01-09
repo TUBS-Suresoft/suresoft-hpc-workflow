@@ -4,7 +4,7 @@ password: $REMOTE_PASSWORD
 
 copy:
   - from: laplace.job
-    to: laplace2d-openmpi/laplace.job
+    to: laplace2d-openmpi/laplace-openmpi.job
     overwrite: true
 
   - from: Containers/rockylinux9-openmpi.sif
