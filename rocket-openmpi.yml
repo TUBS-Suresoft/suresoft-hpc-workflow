@@ -3,7 +3,7 @@ user: $REMOTE_USER
 password: $REMOTE_PASSWORD
 
 copy:
-  - from: laplace.job
+  - from: laplace-openmpi.job
     to: laplace2d-openmpi/laplace-openmpi.job
     overwrite: true
 
