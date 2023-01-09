@@ -35,6 +35,36 @@ build_singularity_container:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
+# 1. builds the singularity container using a docker container
+# Needs a priviliged gitlab runner.
+# Input: Containers/rockylinux9-mpich.def
+# Output: Containers/rockylinux9-mpich.sif
+###############################################################################
+build_singularity_container_openmpi:
+  image: 
+    name: quay.io/singularity/singularity:v3.10.4
+    entrypoint: [""]
+
+  stage: build
+
+  tags:
+    - linux
+    - privileged
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - Containers/rockylinux9-openmpi.sif
+
+  cache:
+    key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+    paths:
+      - Containers/
+
+  script:
+    - singularity build "Containers/rockylinux9-openmpi.sif" "Containers/rockylinux9-openmpi.def"
+
+###############################################################################
 # 2. runs the container on the hpc cluster using hpc-rocket
 # rocket.yml used the configuration file rocket.yml, copies the defined data
 # to the cluster, submits a slurm job and copies data back
@@ -58,6 +88,32 @@ run_hpc_cluster:
     expire_in: 1 hrs
     paths:
       - results/
+
+###############################################################################
+# 2. runs the container on the hpc cluster using hpc-rocket
+# rocket.yml used the configuration file rocket.yml, copies the defined data
+# to the cluster, submits a slurm job and copies data back
+# Output: result data located in results/
+###############################################################################
+run_hpc_cluster_openmpi:
+  image: python:3.10
+
+  stage: simulation
+
+  needs: ["build_singularity_container"]
+
+  before_script:
+    - pip install hpc-rocket==0.3.0
+
+  script:
+    - hpc-rocket launch --watch rocket-openmpi.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
+
 
 
 ###############################################################################

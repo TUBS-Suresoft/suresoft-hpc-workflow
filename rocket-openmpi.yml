@@ -1,0 +1,28 @@
+host: $REMOTE_HOST
+user: $REMOTE_USER
+password: $REMOTE_PASSWORD
+
+copy:
+  - from: laplace.job
+    to: laplace2d-openmpi/laplace.job
+    overwrite: true
+
+  - from: Containers/rockylinux9-openmpi.sif
+    to: laplace2d-openmpi/rockylinux9-openmpi.sif
+    overwrite: true
+
+collect:
+  - from: laplace2d-openmpi/results/*
+    to: results
+    overwrite: true
+
+  - from: laplace2d-openmpi/laplace.out
+    to: results
+    overwrite: true
+
+
+#clean:
+#  - laplace2d/*
+
+sbatch: laplace2d-openmpi/laplace-openmpi.job
+continue_if_job_fails: true
