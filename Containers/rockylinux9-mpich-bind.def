@@ -15,6 +15,8 @@ Stage: build
     yum group install -y "Development Tools" && \
     yum install -y                              \
     cmake                                    && \
+    mpich                                       \
+    mpich-devel                                 \
     source /etc/profile.d/modules.sh         && \
     module load mpi                          && \
     mkdir build && cd build && cmake .. && make
