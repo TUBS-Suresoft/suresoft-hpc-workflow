@@ -4,23 +4,23 @@ password: $REMOTE_PASSWORD
 
 copy:
   - from: laplace-native.job
-    to: laplace2d/laplace-native.job
+    to: laplace2d-native/laplace-native.job
     overwrite: true
 
   - from: src/
-    to: laplace2d/src/
+    to: laplace2d-native/src/
     overwrite: true
 
   - from: CMakeLists.txt
-    to: laplace2d/CMakeLists.txt
+    to: laplace2d-native/CMakeLists.txt
     overwrite: true
 
 collect:
-  - from: laplace2d/results/*
+  - from: laplace2d-native/results/*
     to: results
     overwrite: true
 
-  - from: laplace2d/laplace.out
+  - from: laplace2d-native/laplace.out
     to: results
     overwrite: true
 
@@ -28,5 +28,5 @@ collect:
 #clean:
 #  - laplace2d/*
 
-sbatch: laplace2d/laplace-native.job
+sbatch: laplace2d-native/laplace-native.job
 continue_if_job_fails: true
