@@ -75,7 +75,7 @@ run_hpc_cluster_mpich:
 
   stage: simulation
 
-  needs: ["build_singularity_container"]
+  needs: ["build_singularity_container_mpich"]
 
   before_script:
     - pip install hpc-rocket==0.3.0
@@ -157,5 +157,3 @@ regression_test:
 
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
-
-
