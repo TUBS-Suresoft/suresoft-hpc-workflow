@@ -81,7 +81,7 @@ run_hpc_cluster_mpich:
     - pip install hpc-rocket==0.3.0
 
   script:
-    - hpc-rocket launch --watch rocket.yml
+    - hpc-rocket launch --watch rocket-mpich.yml
     - cat results/laplace.out
 
   artifacts:
