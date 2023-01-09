@@ -77,3 +77,28 @@ regression_test:
 
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
+
+
+
+
+###############################################################################
+# 
+###############################################################################
+run_native_hpc_cluster:
+  image: python:3.10
+
+  stage: simulation
+
+  needs: []
+
+  before_script:
+    - pip install hpc-rocket==0.3.0
+
+  script:
+    - hpc-rocket launch --watch rocket-native.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
