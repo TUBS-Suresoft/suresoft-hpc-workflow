@@ -8,7 +8,7 @@
 
 
 ## Introduction
-This project includes an application of a 2D Laplace heat transfer in a plate. It is developed as a showcase for the [SURESOFT](https://www.tu-braunschweig.de/suresoft) workflow addressing reproducibility on HPC platforms. This workflow shows how to automatically deploy containers to clusters and verify the results using continuous integration.
+This workflow shows how to automatically deploy containers to clusters and verify the results using continuous integration. It is developed as a showcase for the [SURESOFT](https://www.tu-braunschweig.de/suresoft) workflow addressing reproducibility on HPC platforms. The project includes a sample application of a 2D Laplace heat transfer in a plate.
 
 [<img src="img/laplace2d.png" width="250"/>](img/laplace2d.png)
 ## Workflow
@@ -25,7 +25,7 @@ The workflow is grouped into three [jobs](.gitlab-ci.yml) in the Continuous Inte
 
 
 ### Prerequisite
-The first CI-job, which builds the container, needs a **privileged** docker GitLab runner. This is necessary because it uses a docker image to build the singularity container. However, this is not needed if the container is already existing.
+The first CI-job, which builds the container, needs a **privileged** docker GitLab runner. This is necessary because it uses a docker image to build the singularity container. However, this is not needed if the container already exists.
 
 
 ## Files

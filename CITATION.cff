@@ -1,5 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it as below."
+type: software
 authors:
   - family-names: Peters
     given-names: Sören
@@ -9,5 +10,29 @@ authors:
     orcid: https://orcid.org/0000-0003-3689-2162
 title: "SURESOFT HPC workflow"
 version: 0.0.1
-# doi: 
-# date-released:
+references:
+  - title: Singularity
+    authors:
+      - family-names: Kurtzer
+        given-names: Gregory M.
+    type: software
+    license: BSD-3-Clause
+    url: https://github.com/apptainer/singularity
+    doi: 10.5281/zenodo.1310023
+  - title: hpc-rocket
+    authors:
+      - family-names: Marcus
+        given-names: Sven
+        orcid: https://orcid.org/0000-0003-3689-2162
+    type: software
+    license: MIT
+    url: https://github.com/SvenMarcus/hpc-rocket
+    doi: 10.5281/zenodo.7355862
+  - title: fieldcompare
+    authors:
+      - family-names: Gläser
+        given-names: Dennis
+        orcid: https://orcid.org/0000-0001-9646-881X
+    type: software
+    license: GPL-3.0-only
+    url: https://gitlab.com/dglaeser/fieldcompare
