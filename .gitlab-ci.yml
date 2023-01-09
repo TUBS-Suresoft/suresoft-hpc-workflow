@@ -100,7 +100,7 @@ run_hpc_cluster_openmpi:
 
   stage: simulation
 
-  needs: ["build_singularity_container"]
+  needs: ["build_singularity_container_openmpi"]
 
   before_script:
     - pip install hpc-rocket==0.3.0
