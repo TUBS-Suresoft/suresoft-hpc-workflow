@@ -16,7 +16,7 @@ echo ""
 
 module purge
 module load singularity/3.9.9
-module load mpi/mpich/mpich_3.4.2
+module load mpi/mpich/mpich_3.2
 module list
 
 cd laplace2d-mpich-bind
