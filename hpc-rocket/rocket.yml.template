@@ -1,0 +1,23 @@
+host: $REMOTE_HOST
+user: $REMOTE_USER
+password: $REMOTE_PASSWORD
+
+copy:
+{% for src, dest in copy_instructions %}
+  - from: "{{ src }}"
+    to: "{{ dest }}"
+    overwrite: true
+{% endfor %}
+
+collect:
+{% for src, dest in collect_instructions %}
+  - from: "{{ src }}"
+    to: "{{ dest }}"
+    overwrite: true
+{% endfor %}
+
+#clean:
+#  - laplace2d/*
+
+sbatch: "{{ jobfile }}"
+continue_if_job_fails: true

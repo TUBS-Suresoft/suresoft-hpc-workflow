@@ -5,7 +5,7 @@
 #SBATCH --time=01:00:00
 #SBATCH --job-name=Laplace2D
 #SBATCH --ntasks-per-node={ntasks_per_node}
-#SBATCH --output={output}
+#SBATCH --output={workdir}/{output}
 
 date
 
@@ -22,5 +22,7 @@ module list
 
 cd {workdir}
 mkdir -p results
+
+{buildcmd}
 
 {mpicmd} {app}
