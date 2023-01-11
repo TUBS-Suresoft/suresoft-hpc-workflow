@@ -2,6 +2,9 @@ stages:
   - build
   - simulation
   - test
+  - trigger
+  - benchmark
+
 
 
 ###############################################################################
@@ -212,3 +215,28 @@ regression_test:
 
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
+
+
+###############################################################################
+# Manually trigger the benchmark child pipeline
+###############################################################################
+create_benchmark_ci:
+  image: python:3.10
+  stage: benchmark
+  script: 
+    - python3 create-benchmark-ci.py
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - benchmark-gitlab-ci.yml
+  when: manual
+
+trigger:benchmark:
+  stage: benchmark
+  needs:
+    - create_benchmark_ci
+  trigger:
+    include:
+      - artifact: benchmark-gitlab-ci.yml
+    strategy: depend
+

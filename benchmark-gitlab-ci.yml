@@ -1,0 +1,54 @@
+
+.benchmark
+  stage: benchmark
+  image: python:3.10
+  before_script:
+    - pip install hpc-rocket==0.3.1
+
+benchmark:rocket-mpich
+  extends: .benchmark
+
+  script:
+    - hpc-rocket launch --watch rocket-mpich.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
+
+benchmark:rocket-native
+  extends: .benchmark
+
+  script:
+    - hpc-rocket launch --watch rocket-native.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
+
+benchmark:rocket-openmpi
+  extends: .benchmark
+
+  script:
+    - hpc-rocket launch --watch rocket-openmpi.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
+
+benchmark:rocket-mpich-bind
+  extends: .benchmark
+
+  script:
+    - hpc-rocket launch --watch rocket-mpich-bind.yml
+    - cat results/laplace.out
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
