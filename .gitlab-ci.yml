@@ -230,7 +230,6 @@ create_benchmark_ci:
     paths:
       - benchmark-gitlab-ci.yml
   when: manual
-  needs: []
 
 trigger:benchmark:
   stage: benchmark
@@ -241,4 +240,6 @@ trigger:benchmark:
       - artifact: benchmark-gitlab-ci.yml
         job: create_benchmark_ci
     strategy: depend
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID
 
