@@ -11,7 +11,7 @@ benchmark_ci_file = """
 
 for hpcRocketjob in hpcRocketjobs:
     benchmark_ci_file += f"""
-benchmark:{hpcRocketjob}
+benchmark:{hpcRocketjob}:
   extends: .benchmark
 
   script:
