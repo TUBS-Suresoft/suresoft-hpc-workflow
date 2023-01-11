@@ -205,7 +205,7 @@ regression_test:
 
   stage: test
 
-  needs: ["run_hpc_cluster_mpich"]
+  needs: ["run_hpc_cluster_openmpi"]
 
   before_script:
     - pip install "git+https://gitlab.com/dglaeser/fieldcompare#egg=fieldcompare[all]"
