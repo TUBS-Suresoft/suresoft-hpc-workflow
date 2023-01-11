@@ -1,5 +1,4 @@
-hpcRocketjobs = ["rocket-mpich", "rocket-native", "rocket-openmpi", "rocket-mpich-bind"]
-
+hpcRocketjobs = ["rocket-mpich", "rocket-mpich-bind", "rocket-openmpi", "rocket-native"]
 
 benchmark_ci_file = """
 stages: 
@@ -24,6 +23,12 @@ benchmark:{hpcRocketjob}:
     expire_in: 1 hrs
     paths:
       - results/
+
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: build_singularity_container_mpich
+    - pipeline: $PARENT_PIPELINE_ID
+      job: build_singularity_container_openmpi
 """
 
 
