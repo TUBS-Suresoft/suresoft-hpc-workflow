@@ -238,5 +238,6 @@ trigger:benchmark:
   trigger:
     include:
       - artifact: benchmark-gitlab-ci.yml
+      job: create_benchmark_ci
     strategy: depend
 
