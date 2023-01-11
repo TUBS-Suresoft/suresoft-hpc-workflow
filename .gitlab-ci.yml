@@ -230,6 +230,7 @@ create_benchmark_ci:
     paths:
       - benchmark-gitlab-ci.yml
   when: manual
+  needs: []
 
 trigger:benchmark:
   stage: benchmark
