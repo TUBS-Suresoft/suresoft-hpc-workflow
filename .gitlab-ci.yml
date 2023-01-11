@@ -230,7 +230,7 @@ create_benchmark_ci:
     paths:
       - benchmark-gitlab-ci.yml
   when: manual
-  needs: []
+  needs: [build_singularity_container_mpich, build_singularity_container_openmpi]
 
 trigger:benchmark:
   stage: benchmark
