@@ -2,6 +2,8 @@ hpcRocketjobs = ["rocket-mpich", "rocket-native", "rocket-openmpi", "rocket-mpic
 
 
 benchmark_ci_file = """
+stages: 
+  - benchmark
 .benchmark:
   stage: benchmark
   image: python:3.10
