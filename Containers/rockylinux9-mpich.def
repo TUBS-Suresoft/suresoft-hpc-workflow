@@ -29,6 +29,3 @@ Stage: runtime
     yum update -y                            && \
     yum install -y                              \
     mpich
-
-%apprun laplace
-    /build/bin/laplace
