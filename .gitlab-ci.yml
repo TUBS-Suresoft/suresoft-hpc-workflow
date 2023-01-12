@@ -32,7 +32,7 @@ build_singularity_container_mpich:
   cache:
     key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - Containers/
+      - Containers/rockylinux9-mpich.sif
 
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
@@ -62,7 +62,7 @@ build_singularity_container_openmpi:
   cache:
     key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - Containers/
+      - Containers/rockylinux9-openmpi.sif
 
   script:
     - singularity build "Containers/rockylinux9-openmpi.sif" "Containers/rockylinux9-openmpi.def"
@@ -92,7 +92,7 @@ build_singularity_container_mpich_bind:
   cache:
     key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - Containers/
+      - Containers/rockylinux9-mpich-bind.sif
 
   script:
     - singularity build "Containers/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
