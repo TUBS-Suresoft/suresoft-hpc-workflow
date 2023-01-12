@@ -34,10 +34,14 @@ build_singularity_container_mpich:
       files:
         - Containers/rockylinux9-mpich.def
     paths:
-      - Containers/
+      - Containers/rockylinux9-mpich.sif
 
   script:
     - ls -l Containers
+    - |
+      if [[ -f Containers/rockylinux9-mpich.sif ]]; then
+        exit 0
+      fi
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
