@@ -42,6 +42,7 @@ build_singularity_container_mpich:
   script:
     - |
       if [[ -f $SINGULARITY_IMAGE ]]; then
+        echo "Cached version of $SINGULARITY_IMAGE used. Clear cache to force rebuild."
         exit 0
       fi
     - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich.def"
@@ -79,6 +80,7 @@ build_singularity_container_openmpi:
   script:
     - |
       if [[ -f $SINGULARITY_IMAGE ]]; then
+        echo "Cached version of $SINGULARITY_IMAGE used. Clear cache to force rebuild."
         exit 0
       fi
     - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-openmpi.def"
@@ -118,6 +120,7 @@ build_singularity_container_mpich_bind:
   script:
     - |
       if [[ -f $SINGULARITY_IMAGE ]]; then
+        echo "Cached version of $SINGULARITY_IMAGE used. Clear cache to force rebuild."
         exit 0
       fi
     - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich-bind.def"
