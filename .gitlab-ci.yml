@@ -20,6 +20,9 @@ build_singularity_container_mpich:
 
   stage: build
 
+  variables:
+    SINGULARITY_IMAGE: "Containers/rockylinux9-mpich.sif"
+
   tags:
     - linux
     - privileged
@@ -27,22 +30,21 @@ build_singularity_container_mpich:
   artifacts:
     expire_in: 1 hrs
     paths:
-      - Containers/rockylinux9-mpich.sif
+      - $SINGULARITY_IMAGE
 
   cache:
     key:
       files:
         - Containers/rockylinux9-mpich.def
     paths:
-      - Containers/rockylinux9-mpich.sif
+      - $SINGULARITY_IMAGE
 
   script:
-    - ls -l Containers
     - |
-      if [[ -f Containers/rockylinux9-mpich.sif ]]; then
+      if [[ -f $SINGULARITY_IMAGE ]]; then
         exit 0
       fi
-    - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
+    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
@@ -61,18 +63,25 @@ build_singularity_container_openmpi:
     - linux
     - privileged
 
+  variables:
+    SINGULARITY_IMAGE: "Containers/rockylinux9-openmpi.sif"
+
   artifacts:
     expire_in: 1 hrs
     paths:
-      - Containers/rockylinux9-openmpi.sif
+      - $SINGULARITY_IMAGE
 
   cache:
     key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
     paths:
-      - Containers/rockylinux9-openmpi.sif
+      - $SINGULARITY_IMAGE
 
   script:
-    - singularity build "Containers/rockylinux9-openmpi.sif" "Containers/rockylinux9-openmpi.def"
+    - |
+      if [[ -f $SINGULARITY_IMAGE ]]; then
+        exit 0
+      fi
+    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-openmpi.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
@@ -91,10 +100,13 @@ build_singularity_container_mpich_bind:
     - linux
     - privileged
 
+  variables:
+    SINGULARITY_IMAGE: "Containers/rockylinux9-mpich-bind.sif"
+
   artifacts:
     expire_in: 1 hrs
     paths:
-      - Containers/rockylinux9-mpich-bind.sif
+      - $SINGULARITY_IMAGE
 
   cache:
     key:
@@ -104,7 +116,11 @@ build_singularity_container_mpich_bind:
       - Containers/
 
   script:
-    - singularity build "Containers/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
+    - |
+      if [[ -f $SINGULARITY_IMAGE ]]; then
+        exit 0
+      fi
+    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich-bind.def"
 
 ###############################################################################
 # 2. runs the container on the hpc cluster using hpc-rocket
