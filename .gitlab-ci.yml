@@ -34,17 +34,17 @@ build_singularity_container_mpich:
       files:
         - Containers/rockylinux9-mpich.def
     paths:
-      - Containers/images/
+      - images/
 
   before_script:
-    - mkdir -p Containers/images/
+    - mkdir -p images/
   
 
   script:
     - pwd
     - ls -l Containers/
-    - ls -l Containers/images/
-    - singularity build "Containers/images/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
+    - ls -l images/
+    - singularity build "images/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
