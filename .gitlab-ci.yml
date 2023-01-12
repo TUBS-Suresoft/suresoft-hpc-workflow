@@ -30,9 +30,11 @@ build_singularity_container_mpich:
       - Containers/rockylinux9-mpich.sif
 
   cache:
-    key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+    key:
+      files:
+        - Containers/rockylinux9-mpich.def
     paths:
-      - Containers/rockylinux9-mpich.sif
+      - Containers/
 
   script:
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
