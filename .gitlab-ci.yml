@@ -37,6 +37,8 @@ build_singularity_container_mpich:
       - Containers/
 
   script:
+    - pwd
+    - ls -l Containers/
     - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
