@@ -5,8 +5,8 @@ struct SimulationParameter
 {
     SimulationParameter() = default;
 
-    size_t gridNx = 512;
-    size_t gridNy = 512;
+    size_t gridNx = 4096;
+    size_t gridNy = 4096;
 
     double bcTop = 15.0;
     double bcBottom = 5.0;

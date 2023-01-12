@@ -1,11 +1,17 @@
-build/
-
+# IDE
 .vscode/
 
-TempOutput.inp
-.DS_Store
+# Python
+__pycache__/
 .venv/
 
+# Singularity Images
 *.sif
 
+# Output
+build/
 results/
+generated/
+
+# macOS
+.DS_Store
