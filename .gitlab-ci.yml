@@ -27,19 +27,19 @@ build_singularity_container_mpich:
   artifacts:
     expire_in: 1 hrs
     paths:
-      - Containers/rockylinux9-mpich.sif
+      - Containers/images/rockylinux9-mpich.sif
 
   cache:
     key:
       files:
         - Containers/rockylinux9-mpich.def
     paths:
-      - Containers/
+      - Containers/images/
 
   script:
     - pwd
     - ls -l Containers/
-    - singularity build "Containers/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
+    - singularity build "Containers/images/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
@@ -91,15 +91,18 @@ build_singularity_container_mpich_bind:
   artifacts:
     expire_in: 1 hrs
     paths:
-      - Containers/rockylinux9-mpich-bind.sif
+      - Containers/images/rockylinux9-mpich-bind.sif
 
   cache:
-    key: "$CI_JOB_NAME-$CI_COMMIT_REF_SLUG"
+    key:
+      files:
+        - Containers/rockylinux9-mpich-bind.def
     paths:
-      - Containers/rockylinux9-mpich-bind.sif
+      - Containers/images/
+
 
   script:
-    - singularity build "Containers/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
+    - singularity build "Containers/images/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
 
 ###############################################################################
 # 2. runs the container on the hpc cluster using hpc-rocket

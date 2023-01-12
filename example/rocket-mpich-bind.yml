@@ -7,7 +7,7 @@ copy:
     to: laplace2d-mpich-bind/laplace.job
     overwrite: true
 
-  - from: Containers/rockylinux9-mpich-bind.sif
+  - from: Containers/images/rockylinux9-mpich-bind.sif
     to: laplace2d-mpich-bind/rockylinux9-mpich-bind.sif
     overwrite: true
 
