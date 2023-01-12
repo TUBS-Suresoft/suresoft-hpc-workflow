@@ -1,3 +1,4 @@
+import config
 from pathlib import Path
 from dataclasses import asdict, dataclass
 from jinja2 import Template
@@ -6,16 +7,13 @@ from jinja2 import Template
 CONTAINER_DIR = Path("Containers")
 CONTAINER_BASENAME = "rockylinux9"
 
-JOB_DIR = Path("slurmjobs")
-
-ROCKET_TEMPLATE_PATH = Path("hpc-rocket/rocket.yml.template")
-ROCKET_TEMPLATE = Template(ROCKET_TEMPLATE_PATH.read_text())
-
 DEF_FILES = CONTAINER_DIR.glob("*.def")
 IMAGES = [def_file.with_suffix(".sif") for def_file in DEF_FILES]
 
 VARIANT_NAMES = [image.stem.removeprefix(CONTAINER_BASENAME + "-") for image in IMAGES]
 IMAGE_BY_VARIANT = dict(zip(VARIANT_NAMES, IMAGES))
+
+ROCKET_TEMPLATE = Template(config.ROCKET_TEMPLATE_PATH.read_text())
 
 
 @dataclass
@@ -33,9 +31,9 @@ def collect_variants(job_dir: Path, variant: str) -> list[Path]:
 def collect_jobs_by_variant() -> dict[str, list[Path]]:
     jobs_by_variant: dict[str, list[Path]] = {}
     for variant in VARIANT_NAMES:
-        jobs_by_variant[variant] = collect_variants(JOB_DIR, variant)
+        jobs_by_variant[variant] = collect_variants(config.SLURM_JOB_DIR, variant)
 
-    jobs_by_variant["native"] = collect_variants(JOB_DIR, "native")
+    jobs_by_variant["native"] = collect_variants(config.SLURM_JOB_DIR, "native")
     return jobs_by_variant
 
 
@@ -83,13 +81,13 @@ def image_copy_instructions(variant: str, jobfile: Path) -> list[tuple[str, str]
 
 def save_rocket_file(variant: str, jobfile: Path) -> None:
     rendered = ROCKET_TEMPLATE.render(**asdict(rocket_from_variant(variant, jobfile)))
-
-    ROCKET_TEMPLATE_PATH.with_name("rocket-" + jobfile.stem + ".yml").write_text(
-        rendered
-    )
+    rocket_filename = "rocket-" + jobfile.stem + ".yml"
+    rocket_file = config.ROCKET_CONFIG_DIR / rocket_filename
+    rocket_file.write_text(rendered)
 
 
 if __name__ == "__main__":
+    config.ensure_dirs()
     jobs_by_variant = collect_jobs_by_variant()
     for variant, jobfiles in jobs_by_variant.items():
         for jobfile in jobfiles:

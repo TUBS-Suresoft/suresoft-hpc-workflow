@@ -1,4 +1,8 @@
-hpcRocketjobs = ["rocket-mpich", "rocket-mpich-bind", "rocket-openmpi", "rocket-native"]
+import config
+from pathlib import Path
+
+hpc_rocket_jobs = config.ROCKET_CONFIG_DIR.glob("rocket-*.yml")
+
 
 benchmark_ci_file = """
 stages: 
@@ -10,13 +14,13 @@ stages:
     - pip install hpc-rocket==0.3.1
 """
 
-for hpcRocketjob in hpcRocketjobs:
+for hpc_rocket_job in hpc_rocket_jobs:
     benchmark_ci_file += f"""
-benchmark:{hpcRocketjob}:
+benchmark:{hpc_rocket_job.stem}:
   extends: .benchmark
 
   script:
-    - hpc-rocket launch --watch {hpcRocketjob}.yml
+    - hpc-rocket launch --watch {hpc_rocket_job}
     - cat results/laplace.out
 
   artifacts:
@@ -29,9 +33,8 @@ benchmark:{hpcRocketjob}:
       job: build_singularity_container_mpich
     - pipeline: $PARENT_PIPELINE_ID
       job: build_singularity_container_openmpi
+    - pipeline: $PARENT_PIPELINE_ID
+      job: create_benchmark_ci
 """
 
-
-
-with open("benchmark-gitlab-ci.yml", "w") as file:
-    file.write(benchmark_ci_file)
+config.BENCHMARK_CI_FILE.write_text(benchmark_ci_file)

@@ -1,11 +1,11 @@
 #!/bin/bash -l
 
 #SBATCH --partition=standard
-#SBATCH --nodes={nodes}
+#SBATCH --nodes={{nodes}}
 #SBATCH --time=01:00:00
 #SBATCH --job-name=Laplace2D
-#SBATCH --ntasks-per-node={ntasks_per_node}
-#SBATCH --output={workdir}/{output}
+#SBATCH --ntasks-per-node={{ntasks_per_node}}
+#SBATCH --output={{workdir}}/{{output}}
 
 date
 
@@ -17,12 +17,12 @@ echo "working directory = "$SLURM_SUBMIT_DIR
 echo ""
 
 module purge
-module load {modules}
+module load {{modules}}
 module list
 
-cd {workdir}
+cd {{workdir}}
 mkdir -p results
 
-{buildcmd}
+{{buildcmd}}
 
-{mpicmd} {app}
+{{mpicmd}} {{app}}

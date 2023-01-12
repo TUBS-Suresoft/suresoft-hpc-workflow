@@ -9,3 +9,4 @@ TempOutput.inp
 *.sif
 
 results/
+generated/

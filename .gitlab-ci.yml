@@ -224,11 +224,13 @@ create_benchmark_ci:
   image: python:3.10
   stage: benchmark
   script: 
-    - python3 create-benchmark-ci.py
+    - python3 jobgeneration/buildjobs.py
+    - python3 jobgeneration/buildrocket.py
+    - python3 jobgeneration/create-benchmark-ci.py
   artifacts:
     expire_in: 1 week
     paths:
-      - benchmark-gitlab-ci.yml
+      - generated/
   when: manual
   needs: [build_singularity_container_mpich, build_singularity_container_openmpi]
 
@@ -238,7 +240,7 @@ trigger:benchmark:
     - create_benchmark_ci
   trigger:
     include:
-      - artifact: benchmark-gitlab-ci.yml
+      - artifact: generated/benchmark-gitlab-ci.yml
         job: create_benchmark_ci
     strategy: depend
   variables:
