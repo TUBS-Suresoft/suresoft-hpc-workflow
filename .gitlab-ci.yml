@@ -36,9 +36,14 @@ build_singularity_container_mpich:
     paths:
       - Containers/images/
 
+  before_script:
+    - mkdir -p Containers/images/
+  
+
   script:
     - pwd
     - ls -l Containers/
+    - ls -l Containers/images/
     - singularity build "Containers/images/rockylinux9-mpich.sif" "Containers/rockylinux9-mpich.def"
 
 ###############################################################################
@@ -100,6 +105,8 @@ build_singularity_container_mpich_bind:
     paths:
       - Containers/images/
 
+  before_script:
+    - mkdir -p Containers/images/
 
   script:
     - singularity build "Containers/images/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
