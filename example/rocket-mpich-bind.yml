@@ -3,7 +3,7 @@ user: $REMOTE_USER
 password: $REMOTE_PASSWORD
 
 copy:
-  - from: laplace-mpich-bind.job
+  - from: example/laplace-mpich-bind.job
     to: laplace2d-mpich-bind/laplace.job
     overwrite: true
 

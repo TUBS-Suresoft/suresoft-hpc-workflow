@@ -1,10 +1,10 @@
 #!/bin/bash -l
 
 #SBATCH --partition=standard
-#SBATCH --nodes=16
+#SBATCH --nodes=1
 #SBATCH --time=00:10:00
 #SBATCH --job-name=Laplace2D
-#SBATCH --ntasks-per-node=1
+#SBATCH --ntasks-per-node=4
 #SBATCH --output=laplace2d-mpich-bind/laplace.out
 
 echo "SLURM_JOBID="$SLURM_JOBID
@@ -23,5 +23,4 @@ cd laplace2d-mpich-bind
 mkdir -p results
 
 export MPI_DIR="/cluster/mpi/mpich"
-# srun --mpi=pmi2 singularity run --app laplace rockylinux9-mpich.sif
-srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" rockylinux9-mpich-bind.sif /build/bin/laplace 4 4
+srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" rockylinux9-mpich-bind.sif /build/bin/laplace 2 2

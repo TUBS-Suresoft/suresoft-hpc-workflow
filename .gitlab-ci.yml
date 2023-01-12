@@ -96,56 +96,6 @@ build_singularity_container_mpich_bind:
 
   script:
     - singularity build "Containers/rockylinux9-mpich-bind.sif" "Containers/rockylinux9-mpich-bind.def"
- 
-###############################################################################
-# 2. runs the container on the hpc cluster using hpc-rocket
-# rocket.yml used the configuration file rocket.yml, copies the defined data
-# to the cluster, submits a slurm job and copies data back
-# Output: result data located in results/
-###############################################################################
-run_hpc_cluster_mpich:
-  image: python:3.10
-
-  stage: simulation
-
-  needs: ["build_singularity_container_mpich"]
-
-  before_script:
-    - pip install hpc-rocket==0.3.1
-
-  script:
-    - hpc-rocket launch --watch rocket-mpich.yml
-    - cat results/laplace.out
-
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - results/
-
-###############################################################################
-# 2. runs the container on the hpc cluster using hpc-rocket
-# rocket.yml used the configuration file rocket.yml, copies the defined data
-# to the cluster, submits a slurm job and copies data back
-# Output: result data located in results/
-###############################################################################
-run_hpc_cluster_openmpi:
-  image: python:3.10
-
-  stage: simulation
-
-  needs: ["build_singularity_container_openmpi"]
-
-  before_script:
-    - pip install hpc-rocket==0.3.1
-
-  script:
-    - hpc-rocket launch --watch rocket-openmpi.yml
-    - cat results/laplace.out
-
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - results/
 
 ###############################################################################
 # 2. runs the container on the hpc cluster using hpc-rocket
@@ -164,32 +114,7 @@ run_hpc_cluster_mpich_bind:
     - pip install hpc-rocket==0.3.1
 
   script:
-    - hpc-rocket launch --watch rocket-mpich-bind.yml
-    - cat results/laplace.out
-
-  artifacts:
-    expire_in: 1 hrs
-    paths:
-      - results/
-
-###############################################################################
-# 2. runs the container on the hpc cluster using hpc-rocket
-# rocket.yml used the configuration file rocket.yml, copies the defined data
-# to the cluster, submits a slurm job and copies data back
-# Output: result data located in results/
-###############################################################################
-run_hpc_cluster_native:
-  image: python:3.10
-
-  stage: simulation
-
-  needs: []
-
-  before_script:
-    - pip install hpc-rocket==0.3.1
-
-  script:
-    - hpc-rocket launch --watch rocket-native.yml
+    - hpc-rocket launch --watch example/rocket-mpich-bind.yml
     - cat results/laplace.out
 
   artifacts:
@@ -208,10 +133,10 @@ regression_test:
 
   stage: test
 
-  needs: ["run_hpc_cluster_openmpi"]
+  needs: ["run_hpc_cluster_mpich_bind"]
 
   before_script:
-    - pip install "git+https://gitlab.com/dglaeser/fieldcompare#egg=fieldcompare[all]"
+    - pip install "fieldcompare[all]"
 
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
@@ -223,10 +148,10 @@ regression_test:
 create_benchmark_ci:
   image: python:3.10
   stage: benchmark
+
   script: 
-    - python3 jobgeneration/buildjobs.py
-    - python3 jobgeneration/buildrocket.py
-    - python3 jobgeneration/create-benchmark-ci.py
+    - python3 -m jobgeneration
+
   artifacts:
     expire_in: 1 week
     paths:

@@ -3,8 +3,8 @@ From: rockylinux:9
 Stage: build
  
 %files
-    src src
-    CMakeLists.txt CMakeLists.txt
+    laplace2d/src src
+    laplace2d/CMakeLists.txt CMakeLists.txt
 
 %post
     yum update -y                            && \

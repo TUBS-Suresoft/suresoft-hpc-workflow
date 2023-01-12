@@ -1,4 +1,4 @@
-import config
+from jobgeneration import config
 from pathlib import Path
 from dataclasses import asdict, dataclass
 from jinja2 import Template
@@ -37,13 +37,6 @@ def collect_jobs_by_variant() -> dict[str, list[Path]]:
     return jobs_by_variant
 
 
-def native_copy_instructions(remote_dir: str) -> list[tuple[str, str]]:
-    if variant == "native":
-        return [("laplace2d", remote_dir + "/laplace")]
-
-    return []
-
-
 def rocket_from_variant(variant: str, jobfile: Path) -> Rocket:
     remote_jobfile = jobfile.stem + "/laplace.job"
     remote_output = jobfile.stem + "/" + jobfile.stem + ".out"
@@ -66,8 +59,15 @@ def build_copy_instructions(
 ) -> list[tuple[str, str]]:
     copy_instructions = [(str(jobfile), remote_jobfile)]
     copy_instructions.extend(image_copy_instructions(variant, jobfile))
-    copy_instructions.extend(native_copy_instructions(jobfile.stem))
+    copy_instructions.extend(native_copy_instructions(variant, jobfile.stem))
     return copy_instructions
+
+
+def native_copy_instructions(variant: str, remote_dir: str) -> list[tuple[str, str]]:
+    if variant == "native":
+        return [("laplace2d/*", remote_dir)]
+
+    return []
 
 
 def image_copy_instructions(variant: str, jobfile: Path) -> list[tuple[str, str]]:
@@ -86,8 +86,7 @@ def save_rocket_file(variant: str, jobfile: Path) -> None:
     rocket_file.write_text(rendered)
 
 
-if __name__ == "__main__":
-    config.ensure_dirs()
+def build_rocket_files() -> None:
     jobs_by_variant = collect_jobs_by_variant()
     for variant, jobfiles in jobs_by_variant.items():
         for jobfile in jobfiles:

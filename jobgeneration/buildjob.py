@@ -1,4 +1,4 @@
-import config
+from jobgeneration import config
 from dataclasses import asdict, dataclass
 from jinja2 import Template
 
@@ -106,9 +106,8 @@ def write_job_file(jobfilename: str, job: Job) -> None:
     path.write_text(format_job_content(job))
 
 
-if __name__ == "__main__":
-    config.ensure_dirs()
-    for nodes, partioning in NODE_SCALE.items():
+def build_slurm_job_files() -> None:
+    for nodes in NODE_SCALE:
         job = mpich_job(nodes)
         jobfile = f"mpich-{nodes}.job"
         write_job_file(jobfile, job)
