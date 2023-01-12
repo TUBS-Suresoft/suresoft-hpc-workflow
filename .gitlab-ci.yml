@@ -149,6 +149,9 @@ create_benchmark_ci:
   image: python:3.10
   stage: benchmark
 
+  before_script:
+    - pip install -r jobgeneration/requirements.txt
+
   script: 
     - python3 -m jobgeneration
 
