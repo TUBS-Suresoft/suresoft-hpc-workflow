@@ -2,10 +2,12 @@
 
 #SBATCH --partition=standard
 #SBATCH --nodes=1
-#SBATCH --time=00:10:00
+#SBATCH --time=01:00:00
 #SBATCH --job-name=Laplace2D
 #SBATCH --ntasks-per-node=4
 #SBATCH --output=laplace2d-mpich-bind/laplace.out
+
+date
 
 echo "SLURM_JOBID="$SLURM_JOBID
 echo "SLURM_JOB_NODELIST"=$SLURM_JOB_NODELIST
