@@ -33,6 +33,8 @@ def build_benchmark_job_string() -> str:
         - pipeline: $PARENT_PIPELINE_ID
           job: build_singularity_container_mpich
         - pipeline: $PARENT_PIPELINE_ID
+          job: build_singularity_container_mpich_bind
+        - pipeline: $PARENT_PIPELINE_ID
           job: build_singularity_container_openmpi
         - pipeline: $PARENT_PIPELINE_ID
           job: create_benchmark_ci
