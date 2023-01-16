@@ -5,8 +5,6 @@ stages:
   - trigger
   - benchmark
 
-
-
 ###############################################################################
 # 1. builds the singularity container using a docker container
 # Needs a priviliged gitlab runner.
@@ -14,7 +12,7 @@ stages:
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
 build_singularity_container_mpich:
-  image: 
+  image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
 
@@ -54,7 +52,7 @@ build_singularity_container_mpich:
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
 build_singularity_container_openmpi:
-  image: 
+  image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
 
@@ -92,7 +90,7 @@ build_singularity_container_openmpi:
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
 build_singularity_container_mpich_bind:
-  image: 
+  image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
 
@@ -150,7 +148,6 @@ run_hpc_cluster_mpich_bind:
     paths:
       - results/
 
-
 ###############################################################################
 # 3. runs a regression data using fieldcompare
 # Fieldcompare compares the in the last job produced data from results/
@@ -169,7 +166,6 @@ regression_test:
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
 
-
 ###############################################################################
 # Manually trigger the benchmark child pipeline
 ###############################################################################
@@ -180,7 +176,7 @@ create_benchmark_ci:
   before_script:
     - pip install -r jobgeneration/requirements.txt
 
-  script: 
+  script:
     - python3 -m jobgeneration
 
   artifacts:
@@ -188,7 +184,12 @@ create_benchmark_ci:
     paths:
       - generated/
   when: manual
-  needs: [build_singularity_container_mpich, build_singularity_container_openmpi]
+  needs:
+    [
+      build_singularity_container_mpich,
+      build_singularity_container_mpich_bind,
+      build_singularity_container_openmpi,
+    ]
 
 trigger:benchmark:
   stage: benchmark
@@ -201,4 +202,3 @@ trigger:benchmark:
     strategy: depend
   variables:
     PARENT_PIPELINE_ID: $CI_PIPELINE_ID
-
