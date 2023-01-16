@@ -139,7 +139,7 @@ run_hpc_cluster_mpich_bind:
   needs: ["build_singularity_container_mpich_bind"]
 
   before_script:
-    - pip install hpc-rocket==0.3.1
+    - pip install hpc-rocket==0.3.2
 
   script:
     - hpc-rocket launch --watch example/rocket-mpich-bind.yml

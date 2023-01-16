@@ -47,7 +47,7 @@ def rocket_from_variant(variant: str, jobfile: Path) -> Rocket:
     return Rocket(
         copy_instructions=copy_instructions,
         collect_instructions=[
-            (remote_output, "results/"),
+            (remote_output, "results/laplace.out"),
             (remote_results, "results/"),
         ],
         jobfile=remote_jobfile,
