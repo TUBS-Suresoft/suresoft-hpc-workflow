@@ -1,3 +1,4 @@
+import logging
 from jobgeneration import config
 from dataclasses import asdict, dataclass
 from jinja2 import Template
@@ -103,6 +104,7 @@ def format_job_content(job: Job) -> str:
 
 def write_job_file(jobfilename: str, job: Job) -> None:
     path = config.SLURM_JOB_DIR / jobfilename
+    logging.info(f"Writing job file [green]{path}[/]")
     path.touch(exist_ok=True)
     path.write_text(format_job_content(job))
 

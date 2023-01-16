@@ -1,7 +1,14 @@
+import logging
 from jobgeneration import config
 from pathlib import Path
 from dataclasses import asdict, dataclass
 from jinja2 import Template
+
+
+def log_image_by_variant(imaae_by_variant: dict[str, Path]):
+    logging.info("[red]Variant[/]: [green]Image[/]")
+    for variant, image in IMAGE_BY_VARIANT.items():
+        logging.info(f"[red]{variant}[/]: [green]{image}[/]")
 
 
 CONTAINER_DIR = Path("Containers")
@@ -12,6 +19,8 @@ IMAGES = [def_file.with_suffix(".sif") for def_file in DEF_FILES]
 
 VARIANT_NAMES = [image.stem.removeprefix(CONTAINER_BASENAME + "-") for image in IMAGES]
 IMAGE_BY_VARIANT = dict(zip(VARIANT_NAMES, IMAGES))
+log_image_by_variant(IMAGE_BY_VARIANT)
+
 
 ROCKET_TEMPLATE = Template(config.ROCKET_TEMPLATE_PATH.read_text())
 
