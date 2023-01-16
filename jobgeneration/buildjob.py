@@ -97,7 +97,8 @@ def native_job(nodes: int) -> Job:
 
 
 def format_job_content(job: Job) -> str:
-    return JOB_TEMPLATE.render(**asdict(job))
+    partition = "shortrun_small" if job.nodes <= 50 else "shortrun_large"
+    return JOB_TEMPLATE.render(**asdict(job), partition=partition)
 
 
 def write_job_file(jobfilename: str, job: Job) -> None:
