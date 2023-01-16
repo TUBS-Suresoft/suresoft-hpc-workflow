@@ -25,4 +25,4 @@ cd laplace2d-mpich-bind
 mkdir -p results
 
 export MPI_DIR="/cluster/mpi/mpich"
-srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" rockylinux9-mpich-bind.sif /build/bin/laplace 2 2
+srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" rockylinux9-mpich-bind.sif /build/bin/laplace 2 2 512 512

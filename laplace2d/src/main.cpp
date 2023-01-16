@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 {
     Timer timer;
 
-    constexpr SimulationParameter parameter;
+    SimulationParameter parameter;
 
     // The fixed number of partitions in x an y direction, e.g. 2x2 = 4
     // The total number of processes has to match the call of mpirun. 
@@ -24,8 +24,15 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    if(argc == 5) {
+        parameter.gridNx = std::stod(argv[3]);
+        parameter.gridNy = std::stod(argv[4]);
+    }
+
     const int numPartsX = std::stoi(argv[1]);
     const int numPartsY = std::stoi(argv[2]);
+
+    std::cout << "Run simulation with grid size: " << parameter.gridNx  << " x " << parameter.gridNy << std::endl;
 
     const int localNx = parameter.gridNx / numPartsX; //division using integers -> not precise
     const int localNy = parameter.gridNy / numPartsY;
