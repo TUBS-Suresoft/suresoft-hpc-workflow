@@ -1,14 +1,7 @@
-import logging
-from rich.logging import RichHandler
+from jobgeneration import buildjob, buildrocket, config, create_benchmark_ci
+from jobgeneration.logging import configure_logging
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(message)s",
-    datefmt="[%X]",
-    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
-)
-
-from jobgeneration import buildrocket, buildjob, config, create_benchmark_ci
+configure_logging()
 
 config.ensure_dirs()
 buildjob.build_slurm_job_files()
