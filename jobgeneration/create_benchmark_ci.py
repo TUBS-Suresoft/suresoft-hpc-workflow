@@ -12,7 +12,7 @@ def build_benchmark_job_string() -> str:
       stage: benchmark
       image: python:3.10
       before_script:
-        - pip install hpc-rocket==0.3.1
+        - pip install hpc-rocket==0.3.2
     """
 
     for hpc_rocket_job in hpc_rocket_jobs:
