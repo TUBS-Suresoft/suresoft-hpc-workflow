@@ -350,6 +350,8 @@ int main(int argc, char **argv)
         MPI_Allreduce(&err, &err_global, 1, MPI_DOUBLE,
                       MPI_SUM, MPI_COMM_WORLD);
         done = (err_global < parameter.error);
+        
+        iteration++;
 
         if (myRank == 0 && (iteration % parameter.outputInterval == 0))
         {
@@ -357,8 +359,6 @@ int main(int argc, char **argv)
             std::cout << "time step: " << iteration << " error: " << err_global << " MNUPS: " << mnups << "\n";
             timer.startNupsTimer();
         }
-
-        iteration++;
     }
 
     if (myRank == 0)
