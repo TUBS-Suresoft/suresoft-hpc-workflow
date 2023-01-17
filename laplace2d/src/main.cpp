@@ -122,6 +122,7 @@ int main(int argc, char **argv)
     timer.startNupsTimer();
 
     MPI_Request request;
+    MPI_Request requests[8];
     /*Iteration*/
     bool done = false;
     while (!done)
@@ -137,7 +138,7 @@ int main(int argc, char **argv)
             if (!isRightBoundaryCell)
             {
                 MPI_Isend(rightSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[0]);
             }
         }
         // odd exchanges with left
@@ -145,7 +146,7 @@ int main(int argc, char **argv)
         {
             if (!isLeftBoundaryCell)
             {
-                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[1]);
                 MPI_Isend(leftSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
             }
         }
@@ -156,7 +157,7 @@ int main(int argc, char **argv)
             if (!isLeftBoundaryCell)
             {
                 MPI_Isend(leftSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[2]);
             }
         }
         // odd exchanges with right
@@ -164,7 +165,7 @@ int main(int argc, char **argv)
         {
             if (!isRightBoundaryCell)
             {
-                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[3]);
                 MPI_Isend(rightSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
             }
         }
@@ -174,7 +175,7 @@ int main(int argc, char **argv)
             if (!isBottomBoundaryCell)
             {
                 MPI_Isend(bottomSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[4]);
             }
         }
         // odd exchanges with top
@@ -182,7 +183,7 @@ int main(int argc, char **argv)
         {
             if (!isTopBoundaryCell)
             {
-                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[5]);
                 MPI_Isend(topSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
             }
         }
@@ -193,7 +194,7 @@ int main(int argc, char **argv)
             if (!isTopBoundaryCell)
             {
                 MPI_Isend(topSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[6]);
             }
         }
         // odd exchanges with bottom
@@ -201,7 +202,7 @@ int main(int argc, char **argv)
         {
             if (!isBottomBoundaryCell)
             {
-                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[7]);
                 MPI_Isend(bottomSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
             }
         }
@@ -220,6 +221,75 @@ int main(int argc, char **argv)
 
         /* now ghost layers should have been received ... */
         MPI_Barrier(MPI_COMM_WORLD);
+
+
+
+        if (myRankX % 2 == 0)
+        {
+            if (!isRightBoundaryCell)
+            {
+                MPI_Wait(&requests[0], MPI_STATUS_IGNORE);
+            }
+        }
+        // odd exchanges with left
+        else
+        {
+            if (!isLeftBoundaryCell)
+            {
+                MPI_Wait(&requests[1], MPI_STATUS_IGNORE);
+            }
+        }
+
+        // even exchanges with left:
+        if (myRankX % 2 == 0)
+        {
+            if (!isLeftBoundaryCell)
+            {
+                MPI_Wait(&requests[2], MPI_STATUS_IGNORE);
+            }
+        }
+        // odd exchanges with right
+        else
+        {
+            if (!isRightBoundaryCell)
+            {
+                MPI_Wait(&requests[3], MPI_STATUS_IGNORE);
+            }
+        }
+        // even exchanges with bottom:
+        if (myRankY % 2 == 0)
+        {
+            if (!isBottomBoundaryCell)
+            {
+                MPI_Wait(&requests[4], MPI_STATUS_IGNORE);
+            }
+        }
+        // odd exchanges with top
+        else
+        {
+            if (!isTopBoundaryCell)
+            {
+                MPI_Wait(&requests[5], MPI_STATUS_IGNORE);
+            }
+        }
+
+        // even exchanges with top:
+        if (myRankY % 2 == 0)
+        {
+            if (!isTopBoundaryCell)
+            {
+                MPI_Wait(&requests[6], MPI_STATUS_IGNORE);
+            }
+        }
+        // odd exchanges with bottom
+        else
+        {
+            if (!isBottomBoundaryCell)
+            {
+                MPI_Wait(&requests[7], MPI_STATUS_IGNORE);
+            }
+        }
+
 
         /* insert ghost layers */
         for (size_t x = 1; x < entireGrid.nx() - 1; x++)
@@ -287,7 +357,7 @@ int main(int argc, char **argv)
         //Allreduce = reduce + broadcast
         MPI_Allreduce(&err, &err_global, 1, MPI_DOUBLE,
                       MPI_SUM, MPI_COMM_WORLD);
-        done = (err_global < 1.0e-3);
+        done = (err_global < parameter.error);
 
         iteration++;
         if (myRank == 0 && (iteration % parameter.outputInterval == 0))
