@@ -24,11 +24,11 @@ def build_benchmark_job_string() -> str:
 
       script:
         - hpc-rocket launch {hpc_rocket_job} |& tee hpcrocket.log
-        - hpc-rocket watch example/rocket-mpich-bind.yml $(cat hpcrocket.log)
+        - hpc-rocket watch example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
         - cat results/laplace.out
 
       after_script:
-        - hpc-rocket cancel {hpc_rocket_job} $(cat hpcrocket.log)
+        - hpc-rocket cancel {hpc_rocket_job} $(python parsejobid.py hpcrocket.log)
 
       artifacts:
         expire_in: 1 hrs

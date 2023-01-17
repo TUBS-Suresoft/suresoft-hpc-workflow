@@ -141,11 +141,11 @@ run_hpc_cluster_mpich_bind:
 
   script:
     - hpc-rocket launch example/rocket-mpich-bind.yml |& tee hpcrocket.log
-    - hpc-rocket watch example/rocket-mpich-bind.yml $(cat hpcrocket.log)
+    - hpc-rocket watch example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
     - cat results/laplace.out
 
   after_script:
-    - hpc-rocket cancel example/rocket-mpich-bind.yml $(cat hpcrocket.log)
+    - hpc-rocket cancel example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
 
   artifacts:
     expire_in: 1 hrs
