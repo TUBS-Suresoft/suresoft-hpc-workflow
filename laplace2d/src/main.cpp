@@ -32,8 +32,6 @@ int main(int argc, char **argv)
     const int numPartsX = std::stoi(argv[1]);
     const int numPartsY = std::stoi(argv[2]);
 
-    std::cout << "Run simulation with grid size: " << parameter.gridNx  << " x " << parameter.gridNy << std::endl;
-
     const int localNx = parameter.gridNx / numPartsX; //division using integers -> not precise
     const int localNy = parameter.gridNy / numPartsY;
 
@@ -51,35 +49,33 @@ int main(int argc, char **argv)
     MPI_Comm_size(MPI_COMM_WORLD, &numProcs);
     MPI_Comm_rank(MPI_COMM_WORLD, &myRank);
 
-    std::cout << "Process " << myRank << ". App runs with processes: " << numProcs << " [" << numPartsX << " x " << numPartsY << "]\n";
-    
+    if(myRank == 0) {
+        printf("Number of processes: %d [ %d, %d ]\n", numProcs, numPartsX, numPartsY);
+    }
+
     assert(numProcs == numPartsX * numPartsY);
 
     const Mapper2D processTopology = Mapper2D(numPartsX, numPartsY);
-    int myRankX = processTopology.xForPos(myRank);
-    int myRankY = processTopology.yForPos(myRank);
+    const int myRankX = processTopology.xForPos(myRank);
+    const int myRankY = processTopology.yForPos(myRank);
 
     // The entire grid has a ghost layer on each side.
     const Mapper2D entireGrid(innerGrid.nx() + 2, innerGrid.ny() + 2);
 
     /* receive buffers for ghost layer data */
-    double *leftReceiveBuffer   = new double[innerGrid.ny()];
-    double *rightReceiveBuffer  = new double[innerGrid.ny()];
-    double *topReceiveBuffer    = new double[innerGrid.nx()];
-    double *bottomReceiveBuffer = new double[innerGrid.nx()];
+    std::vector<double> leftReceiveBuffer(innerGrid.ny());
+    std::vector<double> rightReceiveBuffer(innerGrid.ny());
+    std::vector<double> topReceiveBuffer(innerGrid.nx());
+    std::vector<double> bottomReceiveBuffer(innerGrid.nx());
 
     /* send buffers */
-    double *leftSendBuffer   = new double[innerGrid.ny()];
-    double *rightSendBuffer  = new double[innerGrid.ny()];
-    double *topSendBuffer    = new double[innerGrid.nx()];
-    double *bottomSendBuffer = new double[innerGrid.nx()];
+    std::vector<double> leftSendBuffer(innerGrid.ny());
+    std::vector<double> rightSendBuffer(innerGrid.ny());
+    std::vector<double> topSendBuffer(innerGrid.nx());
+    std::vector<double> bottomSendBuffer(innerGrid.nx());
 
-    std::vector<double> oldData (entireGrid.size());
-    std::vector<double> newData (entireGrid.size());
-
-    /* initialization */
-    for (size_t i = 0; i < entireGrid.size(); i++)
-        oldData[i] = 0.0;
+    std::vector<double> oldData (entireGrid.size(), 0.0);
+    std::vector<double> newData (entireGrid.size(), 0.0);
 
     /* In the parallel version also initialize send buffers here ... */
     for (size_t x = 1; x < entireGrid.nx() - 1; x++)
@@ -137,8 +133,8 @@ int main(int argc, char **argv)
         {
             if (!isRightBoundaryCell)
             {
-                MPI_Isend(rightSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[0]);
+                MPI_Isend(rightSendBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(rightReceiveBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[0]);
             }
         }
         // odd exchanges with left
@@ -146,8 +142,8 @@ int main(int argc, char **argv)
         {
             if (!isLeftBoundaryCell)
             {
-                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[1]);
-                MPI_Isend(leftSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(leftReceiveBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[1]);
+                MPI_Isend(leftSendBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
             }
         }
 
@@ -156,8 +152,8 @@ int main(int argc, char **argv)
         {
             if (!isLeftBoundaryCell)
             {
-                MPI_Isend(leftSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(leftReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[2]);
+                MPI_Isend(leftSendBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(leftReceiveBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX - 1, myRankY), 0, MPI_COMM_WORLD, &requests[2]);
             }
         }
         // odd exchanges with right
@@ -165,8 +161,8 @@ int main(int argc, char **argv)
         {
             if (!isRightBoundaryCell)
             {
-                MPI_Irecv(rightReceiveBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[3]);
-                MPI_Isend(rightSendBuffer, innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(rightReceiveBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &requests[3]);
+                MPI_Isend(rightSendBuffer.data(), innerGrid.ny(), MPI_DOUBLE, processTopology.pos(myRankX + 1, myRankY), 0, MPI_COMM_WORLD, &request);
             }
         }
         // even exchanges with bottom:
@@ -174,8 +170,8 @@ int main(int argc, char **argv)
         {
             if (!isBottomBoundaryCell)
             {
-                MPI_Isend(bottomSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[4]);
+                MPI_Isend(bottomSendBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(bottomReceiveBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[4]);
             }
         }
         // odd exchanges with top
@@ -183,8 +179,8 @@ int main(int argc, char **argv)
         {
             if (!isTopBoundaryCell)
             {
-                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[5]);
-                MPI_Isend(topSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(topReceiveBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[5]);
+                MPI_Isend(topSendBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
             }
         }
 
@@ -193,8 +189,8 @@ int main(int argc, char **argv)
         {
             if (!isTopBoundaryCell)
             {
-                MPI_Isend(topSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
-                MPI_Irecv(topReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[6]);
+                MPI_Isend(topSendBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(topReceiveBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY - 1), 0, MPI_COMM_WORLD, &requests[6]);
             }
         }
         // odd exchanges with bottom
@@ -202,8 +198,8 @@ int main(int argc, char **argv)
         {
             if (!isBottomBoundaryCell)
             {
-                MPI_Irecv(bottomReceiveBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[7]);
-                MPI_Isend(bottomSendBuffer, innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
+                MPI_Irecv(bottomReceiveBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &requests[7]);
+                MPI_Isend(bottomSendBuffer.data(), innerGrid.nx(), MPI_DOUBLE, processTopology.pos(myRankX, myRankY + 1), 0, MPI_COMM_WORLD, &request);
             }
         }
 
@@ -358,9 +354,7 @@ int main(int argc, char **argv)
         if (myRank == 0 && (iteration % parameter.outputInterval == 0))
         {
             const auto mnups = timer.getMNups(realGridNx * realGridNy * parameter.outputInterval);
-
             std::cout << "time step: " << iteration << " error: " << err_global << " MNUPS: " << mnups << "\n";
-
             timer.startNupsTimer();
         }
 
@@ -371,7 +365,8 @@ int main(int argc, char **argv)
     {
         const auto runtime = timer.getRuntimeSeconds();
         std::cout << "Runtime: " << runtime << " s. " << std::endl;
-        std::cout << "Average MNUPS: " << timer.getMNupsForEntireRuntime(realGridNx * realGridNy * iteration) << std::endl;
+        const unsigned long long int updated_nodes = (unsigned long long int)realGridNx * (unsigned long long int)realGridNy * (unsigned long long int)iteration;
+        std::cout << "Average MNUPS: " << timer.getMNupsForEntireRuntime(updated_nodes) << std::endl;
     }
 
     /* Output (only process 0. In the parallel case, it must of course still receive the data from all other processes - without the Ghostlayer. Here programmed out, alternatively MPI_Gather can be used. */
@@ -400,16 +395,6 @@ int main(int argc, char **argv)
         for (size_t y = 1; y < entireGrid.ny() - 1; y++) // line by line
             MPI_Ssend(oldData.data() + entireGrid.pos(1, y), entireGrid.nx() - 2, MPI_DOUBLE, 0, 0, MPI_COMM_WORLD);
     }
-
-    delete[] leftReceiveBuffer;
-    delete[] rightReceiveBuffer;
-    delete[] topReceiveBuffer;
-    delete[] bottomReceiveBuffer;
-
-    delete[] leftSendBuffer;
-    delete[] rightSendBuffer;
-    delete[] topSendBuffer;
-    delete[] bottomSendBuffer;
 
 
     MPI_Barrier(MPI_COMM_WORLD);

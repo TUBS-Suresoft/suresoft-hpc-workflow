@@ -30,19 +30,19 @@ public:
         startNupsTime = std::chrono::high_resolution_clock::now();
     }
 
-    size_t getMNups(long updated_nodes) const
+    size_t getMNups(unsigned long long int updated_nodes) const
     {
         return calculateMNups(updated_nodes, startNupsTime);
     }
 
-    size_t calculateMNups(long updated_nodes, std::chrono::time_point<std::chrono::high_resolution_clock> startTime) const
+    size_t calculateMNups(unsigned long long int updated_nodes, std::chrono::time_point<std::chrono::high_resolution_clock> startTime) const
     {
         // MNUPS = Million Node Updates per Second
         std::chrono::duration<double> diff = std::chrono::high_resolution_clock::now() - startTime;
         return (size_t)((double)updated_nodes / diff.count() / 1E6);
     }
 
-    size_t getMNupsForEntireRuntime(long updated_nodes) const
+    size_t getMNupsForEntireRuntime(unsigned long long int updated_nodes) const
     {
         return calculateMNups(updated_nodes, startRuntime);
     }
