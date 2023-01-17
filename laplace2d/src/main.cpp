@@ -220,10 +220,6 @@ int main(int argc, char **argv)
             }
 
         /* now ghost layers should have been received ... */
-        MPI_Barrier(MPI_COMM_WORLD);
-
-
-
         if (myRankX % 2 == 0)
         {
             if (!isRightBoundaryCell)
@@ -359,22 +355,23 @@ int main(int argc, char **argv)
                       MPI_SUM, MPI_COMM_WORLD);
         done = (err_global < parameter.error);
 
-        iteration++;
         if (myRank == 0 && (iteration % parameter.outputInterval == 0))
         {
-            const auto mnups = timer.getMNups(innerGrid.size() * parameter.outputInterval);
+            const auto mnups = timer.getMNups(realGridNx * realGridNy * parameter.outputInterval);
 
             std::cout << "time step: " << iteration << " error: " << err_global << " MNUPS: " << mnups << "\n";
 
             timer.startNupsTimer();
         }
+
+        iteration++;
     }
 
     if (myRank == 0)
     {
         const auto runtime = timer.getRuntimeSeconds();
         std::cout << "Runtime: " << runtime << " s. " << std::endl;
-        std::cout << "Average MNUPS: " << timer.getMNupsForEntireRuntime(innerGrid.size() * iteration) << std::endl;
+        std::cout << "Average MNUPS: " << timer.getMNupsForEntireRuntime(realGridNx * realGridNy * iteration) << std::endl;
     }
 
     /* Output (only process 0. In the parallel case, it must of course still receive the data from all other processes - without the Ghostlayer. Here programmed out, alternatively MPI_Gather can be used. */
