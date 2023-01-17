@@ -15,7 +15,7 @@ struct SimulationParameter
 
     size_t outputInterval = 1000;
 
-    const double error = 1.0e-4;
+    const double error = 1.0e-2;
 
     const char* outputFileName = "results/TemperatureField.avs";
 };
