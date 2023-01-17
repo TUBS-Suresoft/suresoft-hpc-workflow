@@ -10,9 +10,10 @@ OPENMPI_RUN_MODULES = ["singularity/3.9.9", "mpi/openmpi/4.10/4.10"]
 NATIVE_RUN_MODULES = ["mpi/mpich/mpich_3.2", "comp/gcc/9.3.0", "comp/cmake/3.25.0"]
 
 NODE_SCALE = {
+    8: {"nx": 4, "ny": 2},
     16: {"nx": 4, "ny": 4},
     32: {"nx": 8, "ny": 4},
-    64: {"nx": 8, "ny": 8},
+    # 64: {"nx": 8, "ny": 8},
 }
 
 SRUN = "srun --mpi=pmi2"

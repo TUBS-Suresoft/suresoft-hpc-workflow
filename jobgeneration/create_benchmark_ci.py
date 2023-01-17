@@ -39,8 +39,14 @@ def build_benchmark_job_string() -> str:
 
       needs:
         - pipeline: $PARENT_PIPELINE_ID
+          job: create_benchmark_ci
+    """
+        if variant_name != "native":
+            benchmark_ci_file += f"""
+        - pipeline: $PARENT_PIPELINE_ID
           job: build_singularity_container_{variant_name}
     """
+
 
     benchmark_ci_file += f"""
     create_graph:

@@ -8,7 +8,7 @@ def create_graph() -> None:
     output = ""
 
     configs = ['native', 'mpich', 'openmpi', 'mpi-bind']
-    processes = [16, 32, 64]
+    processes = [8, 16, 32]
 
     for cfg in configs:
         y = []
