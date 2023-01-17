@@ -13,7 +13,7 @@ def build_benchmark_job_string() -> str:
       stage: benchmark
       image: python:3.10
       before_script:
-        - pip install hpc-rocket==0.3.2
+        - pip install hpc-rocket==0.4.0
     """
 
     for hpc_rocket_job in hpc_rocket_jobs:
@@ -24,7 +24,8 @@ def build_benchmark_job_string() -> str:
 
       script:
         - hpc-rocket launch {hpc_rocket_job} |& tee hpcrocket.log
-        - hpc-rocket watch example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
+        - hpc-rocket watch {hpc_rocket_job} $(python parsejobid.py hpcrocket.log)
+        - hpc-rocket finalize {hpc_rocket_job}
         - cat results/laplace.out
 
       after_script:
