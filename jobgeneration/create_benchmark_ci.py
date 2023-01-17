@@ -1,6 +1,7 @@
 from pathlib import Path
 from jobgeneration import config
 import textwrap
+import logging
 
 
 def build_benchmark_job_string() -> str:
@@ -39,6 +40,34 @@ def build_benchmark_job_string() -> str:
       needs:
         - pipeline: $PARENT_PIPELINE_ID
           job: build_singularity_container_{variant_name}
+    """
+
+    benchmark_ci_file += f"""
+    create_graph:
+      stage: benchmark
+      image: python:3.10
+
+      before_script:
+        - pip install -r jobgeneration/requirements.txt
+
+      script:
+        - python3 -m jobgeneration plot
+
+      artifacts:
+        expire_in: 1 week
+        paths:
+          - results/
+
+      needs:
+        ["""
+
+    hpc_rocket_jobs = config.ROCKET_CONFIG_DIR.glob("rocket-*.yml")
+    for hpc_rocket_job in hpc_rocket_jobs:
+        benchmark_ci_file += f"""
+          benchmark:{hpc_rocket_job.stem},"""
+
+    benchmark_ci_file += f"""
+        ]
     """
 
     return textwrap.dedent(benchmark_ci_file)

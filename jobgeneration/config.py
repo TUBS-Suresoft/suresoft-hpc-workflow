@@ -8,7 +8,7 @@ GENERATED_DIR = Path("generated")
 SLURM_JOB_DIR = GENERATED_DIR / "slurmjobs"
 ROCKET_CONFIG_DIR = GENERATED_DIR / "hpc-rocket"
 BENCHMARK_CI_FILE = GENERATED_DIR / "benchmark-gitlab-ci.yml"
-
+BENCHMARK_GRAPH_FILE =  GENERATED_DIR / "graph.txt"
 
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)

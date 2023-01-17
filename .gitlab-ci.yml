@@ -182,7 +182,7 @@ create_benchmark_ci:
     - pip install -r jobgeneration/requirements.txt
 
   script:
-    - python3 -m jobgeneration
+    - python3 -m jobgeneration build
 
   artifacts:
     expire_in: 1 week
