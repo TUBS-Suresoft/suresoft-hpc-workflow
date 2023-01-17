@@ -140,8 +140,12 @@ run_hpc_cluster_mpich_bind:
     - pip install hpc-rocket==0.3.2
 
   script:
-    - hpc-rocket launch --watch example/rocket-mpich-bind.yml
+    - hpc-rocket launch example/rocket-mpich-bind.yml |& tee hpcrocket.log
+    - hpc-rocket watch example/rocket-mpich-bind.yml $(cat hpcrocket.log)
     - cat results/laplace.out
+
+  after_script:
+    - hpc-rocket cancel example/rocket-mpich-bind.yml $(cat hpcrocket.log)
 
   artifacts:
     expire_in: 1 hrs
