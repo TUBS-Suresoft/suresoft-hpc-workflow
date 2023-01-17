@@ -1,3 +1,4 @@
+from pathlib import Path
 from jobgeneration import config
 import textwrap
 
@@ -16,6 +17,7 @@ def build_benchmark_job_string() -> str:
     """
 
     for hpc_rocket_job in hpc_rocket_jobs:
+        variant_name = get_variant_name_from_rocket_file(hpc_rocket_job)
         benchmark_ci_file += f"""
     benchmark:{hpc_rocket_job.stem}:
       extends: .benchmark
@@ -31,16 +33,17 @@ def build_benchmark_job_string() -> str:
 
       needs:
         - pipeline: $PARENT_PIPELINE_ID
-          job: build_singularity_container_mpich
-        - pipeline: $PARENT_PIPELINE_ID
-          job: build_singularity_container_mpich_bind
-        - pipeline: $PARENT_PIPELINE_ID
-          job: build_singularity_container_openmpi
-        - pipeline: $PARENT_PIPELINE_ID
-          job: create_benchmark_ci
+          job: build_singularity_container_{variant_name}
     """
 
     return textwrap.dedent(benchmark_ci_file)
+
+
+def get_variant_name_from_rocket_file(hpc_rocket_job: Path) -> str:
+    variant_name = hpc_rocket_job.stem.removeprefix("rocket-").replace("-", "_")
+    last_underscore = variant_name.rfind("_")
+    variant_name = variant_name[:last_underscore]
+    return variant_name
 
 
 def build_benchmark_ci_file() -> None:
