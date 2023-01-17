@@ -19,6 +19,7 @@ def build_benchmark_job_string() -> str:
 
     for hpc_rocket_job in hpc_rocket_jobs:
         variant_name = get_variant_name_from_rocket_file(hpc_rocket_job)
+        extended_variant_name = get_extended_variant_name_from_rocket_file(hpc_rocket_job)
         benchmark_ci_file += f"""
     benchmark:{hpc_rocket_job.stem}:
       extends: .benchmark
@@ -27,7 +28,7 @@ def build_benchmark_job_string() -> str:
         - hpc-rocket launch {hpc_rocket_job} |& tee hpcrocket.log
         - hpc-rocket watch {hpc_rocket_job} $(python parsejobid.py hpcrocket.log)
         - hpc-rocket finalize {hpc_rocket_job}
-        - cat results/laplace.out
+        - cat results/{extended_variant_name}.out
 
       after_script:
         - hpc-rocket cancel {hpc_rocket_job} $(python parsejobid.py hpcrocket.log)
@@ -80,10 +81,13 @@ def build_benchmark_job_string() -> str:
 
 
 def get_variant_name_from_rocket_file(hpc_rocket_job: Path) -> str:
-    variant_name = hpc_rocket_job.stem.removeprefix("rocket-").replace("-", "_")
+    variant_name = get_extended_variant_name_from_rocket_file(hpc_rocket_job).replace("-", "_")
     last_underscore = variant_name.rfind("_")
     variant_name = variant_name[:last_underscore]
     return variant_name
+
+def get_extended_variant_name_from_rocket_file(hpc_rocket_job: Path) -> str:
+    return hpc_rocket_job.stem.removeprefix("rocket-")
 
 
 def build_benchmark_ci_file() -> None:
