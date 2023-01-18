@@ -5,19 +5,16 @@ import matplotlib.pyplot as plt
 from jobgeneration import config
 
 
-def create_graph() -> None:
+def create() -> None:
     output = ""
 
-    configs = ['native', 'mpich', 'openmpi', 'mpich-bind']
-    processes = [8, 16, 32]
-
-    for cfg in configs:
+    for cfg in config.MPI_TYPES:
         y = []
-        for process in processes:
+        for process in config.PROCESSES:
             path = f"results/{cfg}-{process}.out"
             p = Path(path)
             if not p.exists():
-                print(f"skip {path} - does not exist")
+                logging.warning(f"skip {path} - does not exist")
                 continue
             output += str(path)
             output += "; "
@@ -34,11 +31,11 @@ def create_graph() -> None:
         if len(y) != 3:
             continue
         logging.info("Plot " + cfg)
-        line, = plt.plot(processes, y)
+        line, = plt.plot(config.PROCESSES, y)
         line.set_label(cfg)
         plt.legend()
 
-    plt.xticks(processes)
+    plt.xticks(config.PROCESSES)
     plt.xlabel('Processes')
     plt.ylabel('MNUPS')
 

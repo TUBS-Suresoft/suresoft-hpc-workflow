@@ -91,6 +91,6 @@ def get_extended_variant_name_from_rocket_file(hpc_rocket_job: Path) -> str:
     return hpc_rocket_job.stem.removeprefix("rocket-")
 
 
-def build_benchmark_ci_file() -> None:
+def create() -> None:
     benchmark_ci_file = build_benchmark_job_string()
     config.BENCHMARK_CI_FILE.write_text(benchmark_ci_file)

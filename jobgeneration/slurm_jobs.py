@@ -110,7 +110,7 @@ def write_job_file(jobfilename: str, job: Job) -> None:
     path.write_text(format_job_content(job))
 
 
-def build_slurm_job_files() -> None:
+def create() -> None:
     for nodes in NODE_SCALE:
         job = mpich_job(nodes)
         jobfile = f"mpich-{nodes}.job"

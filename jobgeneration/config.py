@@ -13,6 +13,9 @@ BENCHMARK_GRAPH_FILE =  GENERATED_DIR / "graph.txt"
 RESULT_DIR = Path("results")
 BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
 
+MPI_TYPES = ['native', 'mpich', 'openmpi', 'mpich-bind']
+PROCESSES = [8, 16, 32]
+
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)
     ROCKET_CONFIG_DIR.mkdir(parents=True, exist_ok=True)

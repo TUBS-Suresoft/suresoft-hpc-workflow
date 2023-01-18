@@ -124,7 +124,7 @@ def save_rocket_file(
     rocket_file.write_text(rendered)
 
 
-def build_rocket_files() -> None:
+def create() -> None:
     images_by_variant = collect_images_by_variant()
     jobs_by_variant = collect_jobs_by_variant(images_by_variant.keys())
     for variant, jobfiles in jobs_by_variant.items():
