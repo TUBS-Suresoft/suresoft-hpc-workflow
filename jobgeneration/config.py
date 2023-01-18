@@ -9,10 +9,10 @@ GENERATED_DIR = Path("generated")
 SLURM_JOB_DIR = GENERATED_DIR / "slurmjobs"
 ROCKET_CONFIG_DIR = GENERATED_DIR / "hpc-rocket"
 BENCHMARK_CI_FILE = GENERATED_DIR / "benchmark-gitlab-ci.yml"
-BENCHMARK_GRAPH_FILE =  GENERATED_DIR / "graph.txt"
 
 RESULT_DIR = Path("results")
 BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
+BENCHMARK_GRAPH_FILE =  RESULT_DIR / "graph_data.out"
 
 
 MPI_TYPES = ['native', 'mpich', 'openmpi', 'mpich-bind']

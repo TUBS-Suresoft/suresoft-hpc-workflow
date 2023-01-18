@@ -63,7 +63,6 @@ def rocket_from_variant(
 ) -> Rocket:
     remote_jobfile = jobfile.stem + "/laplace.job"
     remote_output = jobfile.stem + "/" + jobfile.stem + ".out"
-    remote_results = jobfile.stem + "/results"
 
     copy_instructions = build_copy_instructions(
         variant, images_by_variant, jobfile, remote_jobfile
@@ -73,7 +72,6 @@ def rocket_from_variant(
         copy_instructions=copy_instructions,
         collect_instructions=[
             (remote_output, f"results/{jobfile.stem}.out"),
-            (remote_results, "results/"),
         ],
         jobfile=remote_jobfile,
     )
