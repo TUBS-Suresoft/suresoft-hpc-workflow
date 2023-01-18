@@ -56,12 +56,24 @@ However, the portability of the container is reduced, since the application must
    <img src="img/multistagebuild_bind.svg" width="300"> <img src="img/multistagebuild_hybrid.svg" width="300">
 </div>
 
+#### Prerequisite
+The first CI-job, which builds the container, requires a GitLab Runner using a **privileged** [Docker Executor](https://docs.gitlab.com/runner/executors/docker.html). This is necessary because it uses a docker image to build the singularity container. However, this is not needed if the container already exists.
+
 
 ### HPC Rocket
 HPC Rocket is a commandline tool to send slurm commands to a remote machine and monitor the job progress. 
 It was primarily written to launch slurm jobs from a CI pipeline.
 
 <img src="img/hpc-rocket.svg" width="600">
+
+### [rocket.yml](example/rocket-mpich-bind.yml)
+- defines files to copy to cluster
+- defines result files to copy back to gitlab
+- defines slurm job file to submit
+
+### [laplace.job](example/laplace-mpich-bind.job)
+- slurm settings
+- executes singularity image
 
 ### Fieldcompare
 `fieldcompare` is a Python package with command-line interface (CLI) that can be used to compare
@@ -71,31 +83,13 @@ In regression tests, the output of a software is compared to reference data that
 the same software at an earlier time, in order to detect if changes to the code cause unexpected
 changes to the behavior of the software. 
 
+We use fieldcompare to compare the temperature field of the the 2d Laplace simulation with a predefined [reference dataset](reference_data/).
+
 ### Benchmarks
 - matplot 
 
-
-### Prerequisite
-The first CI-job, which builds the container, requires a GitLab Runner using a **privileged** [Docker Executor](https://docs.gitlab.com/runner/executors/docker.html). This is necessary because it uses a docker image to build the singularity container. However, this is not needed if the container already exists.
-
-
-## Files
-### [.gitlab-ci.yml](.gitlab-ci.yml)
-1. builds singularity image based on [Containers/rockylinux9-mpich.def](Containers/rockylinux9-mpich.def)
-   - we are using a rockylinux base image, as our target platform is a CentOS 7
-2. copy image with [hpc-rocket](https://zenodo.org/record/7469695) to cluster ([rocket.yml](rocket.yml)) and submit slurm job ([laplace.job](laplace.job))
-   - it is necessary that REMOTE_HOST, REMOTE_USER and REMOTE_PASSWORD (or PRIVATE_KEY) are set in the GitLab CI project settings according to variable names in rocket.yml
-3. verifies the result with [fieldcompare](https://gitlab.com/dglaeser/fieldcompare)
-
-### [Containers/rockylinux9-mpich.def](Containers/rockylinux9-mpich.def)
-- defines singularity image
-- defines executing of binary file
-
-### [rocket.yml](rocket.yml)
-- defines files to copy to cluster
-- defines result files to copy back to gitlab
-- defines slurm job file to submit
-
-### [laplace.job](laplace.job)
-- slurm settings
-- executes singularity image
+- dynamic CI pipeline
+- jinja templates
+  - slurmjob
+  - rocket files
+  - CI jobs
