@@ -29,12 +29,14 @@ The workflow is grouped into four [stages](.gitlab-ci.yml) in the Continuous Int
 3. **test**
    - Runs a regression test with [fieldcompare](https://gitlab.com/dglaeser/fieldcompare) to compare the results of the simulation stage with reference data.
 
+
+<img src="img/ci-stages.png" style="margin: 3em;"/>
+
+
 4. **benchmark**
    - Dynamically generates additional CI jobs to benchmark the performance of the different MPI approaches.
 
-
-![Workflow](img/workflow.png)
-
+<img src="img/ci-stages-benchmark.png" style="margin: 3em;"/>
 
 ### Singularity Images
 
@@ -49,6 +51,28 @@ In practice this leads to a small performance overhead in comparison to a native
 Instead the MPI installation of the host machine is mounted into the container.
 This results in a performance on par with a native solution.
 However, the portability of the container is reduced, since the application must be compiled with the same MPI version that is used on the host machine.
+
+<div style="margin: 3em; display: flex; gap: 5em;">
+   <img src="img/multistagebuild_bind.png" width="300"> <img src="img/multistagebuild_hybrid.png" width="300">
+</div>
+
+
+### HPC Rocket
+HPC Rocket is a commandline tool to send slurm commands to a remote machine and monitor the job progress. 
+It was primarily written to launch slurm jobs from a CI pipeline.
+
+<img src="img/hpc-rocket.png" width="600">
+
+### Fieldcompare
+`fieldcompare` is a Python package with command-line interface (CLI) that can be used to compare
+datasets for (fuzzy) equality. It was designed mainly to serve as a tool to realize regression tests
+for research software, and in particular research software that deals with numerical simulations.
+In regression tests, the output of a software is compared to reference data that was produced by
+the same software at an earlier time, in order to detect if changes to the code cause unexpected
+changes to the behavior of the software. 
+
+### Benchmarks
+- matplot 
 
 
 ### Prerequisite
