@@ -10,6 +10,10 @@ ROCKET_CONFIG_DIR = GENERATED_DIR / "hpc-rocket"
 BENCHMARK_CI_FILE = GENERATED_DIR / "benchmark-gitlab-ci.yml"
 BENCHMARK_GRAPH_FILE =  GENERATED_DIR / "graph.txt"
 
+RESULT_DIR = Path("results")
+BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
+
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)
     ROCKET_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+    RESULT_DIR.mkdir(parents=True, exist_ok=True)

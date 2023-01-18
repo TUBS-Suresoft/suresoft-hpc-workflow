@@ -63,7 +63,8 @@ def build_benchmark_job_string() -> str:
       artifacts:
         expire_in: 1 week
         paths:
-          - results/
+          - results/*.out
+          - results/*.png
 
       needs:
         ["""
