@@ -9,13 +9,6 @@ MPICH_RUN_MODULES = ["singularity/3.9.9", "mpi/mpich/mpich_3.2"]
 OPENMPI_RUN_MODULES = ["singularity/3.9.9", "mpi/openmpi/4.10/4.10"]
 NATIVE_RUN_MODULES = ["mpi/mpich/mpich_3.2", "comp/gcc/9.3.0", "comp/cmake/3.25.0"]
 
-NODE_SCALE = {
-    8: {"nx": 4, "ny": 2},
-    16: {"nx": 4, "ny": 4},
-    32: {"nx": 8, "ny": 4},
-    # 64: {"nx": 8, "ny": 8},
-}
-
 SRUN = "srun --mpi=pmi2"
 MPIRUN = "mpirun -np {nodes}"
 
@@ -45,58 +38,61 @@ class Job:
     buildcmd: str = ""
 
 
-def mpich_job(nodes: int) -> Job:
+MODULES_BY_VARIANT = {
+    "mpich": MPICH_RUN_MODULES,
+    "mpich-bind": MPICH_RUN_MODULES,
+    "openmpi": OPENMPI_RUN_MODULES,
+    "native": NATIVE_RUN_MODULES,
+}
+
+IMAGES_BY_VARIANT = {
+    "mpich": MPICH_IMG,
+    "mpich-bind": MPICH_BIND_IMG,
+    "openmpi": OPENMPI_IMG,
+    "native": "",
+}
+
+MPICMD_BY_VARIANT = {
+    "mpich": SRUN,
+    "mpich-bind": SRUN,
+    "openmpi": MPIRUN,
+    "native": SRUN,
+}
+
+APPCMD_BY_VARIANT = {
+    "mpich": SINGULARITY_CMD,
+    "mpich-bind": SINGULARITY_CMD,
+    "openmpi": SINGULARITY_CMD,
+    "native": NATIVE_CMD,
+}
+
+def get_bind_opt(variant: str) -> str:
+    if "bind" in variant:
+        return SINGULARITY_BIND_OPT.format(bind=MPI_DIR)
+
+    return ""
+
+def get_build_cmd(variant: str) -> str:
+    if variant == "native":
+        return NATIVE_BUILD_CMD
+
+    return ""
+
+def make_job(nodes: int, variant: str) -> Job:
     return Job(
         nodes=nodes,
-        ntasks_per_node=1,
-        workdir=f"mpich-{nodes}",
-        output=f"mpich-{nodes}.out",
-        modules=" ".join(MPICH_RUN_MODULES),
-        mpicmd=SRUN,
-        app=SINGULARITY_CMD.format(image=MPICH_IMG, bind="", **NODE_SCALE[nodes]),
-    )
-
-
-def mpich_bind_job(nodes: int) -> Job:
-    return Job(
-        nodes=nodes,
-        ntasks_per_node=1,
-        workdir=f"mpich-bind-{nodes}",
-        output=f"mpich-bind-{nodes}.out",
-        modules=" ".join(MPICH_RUN_MODULES),
-        mpicmd=SRUN,
-        app=SINGULARITY_CMD.format(
-            image=MPICH_BIND_IMG,
-            bind=SINGULARITY_BIND_OPT.format(bind=MPI_DIR),
-            **NODE_SCALE[nodes],
+        ntasks_per_node=config.TASKS_PER_NODE,
+        workdir=f"{variant}-{nodes}",
+        output=f"{variant}-{nodes}.out",
+        modules=" ".join(MODULES_BY_VARIANT[variant]),
+        mpicmd=MPICMD_BY_VARIANT[variant],
+        buildcmd=get_build_cmd(variant),
+        app=APPCMD_BY_VARIANT[variant].format(
+            image=IMAGES_BY_VARIANT[variant],
+            bind=get_bind_opt(variant),
+            **config.NODE_SCALING[nodes],
         ),
     )
-
-
-def openmpi_job(nodes: int) -> Job:
-    return Job(
-        nodes=nodes,
-        ntasks_per_node=1,
-        workdir=f"openmpi-{nodes}",
-        output=f"openmpi-{nodes}.out",
-        modules=" ".join(OPENMPI_RUN_MODULES),
-        mpicmd=MPIRUN.format(nodes=nodes),
-        app=SINGULARITY_CMD.format(image=OPENMPI_IMG, bind="", **NODE_SCALE[nodes]),
-    )
-
-
-def native_job(nodes: int) -> Job:
-    return Job(
-        nodes=nodes,
-        ntasks_per_node=1,
-        workdir=f"native-{nodes}",
-        output=f"native-{nodes}.out",
-        modules=" ".join(NATIVE_RUN_MODULES),
-        mpicmd=SRUN,
-        app=NATIVE_CMD.format(**NODE_SCALE[nodes]),
-        buildcmd=NATIVE_BUILD_CMD,
-    )
-
 
 def format_job_content(job: Job) -> str:
     partition = "shortrun_small" if job.nodes <= 50 else "shortrun_large"
@@ -111,19 +107,8 @@ def write_job_file(jobfilename: str, job: Job) -> None:
 
 
 def create() -> None:
-    for nodes in NODE_SCALE:
-        job = mpich_job(nodes)
-        jobfile = f"mpich-{nodes}.job"
-        write_job_file(jobfile, job)
-
-        job = mpich_bind_job(nodes)
-        jobfile = f"mpich-bind-{nodes}.job"
-        write_job_file(jobfile, job)
-
-        job = openmpi_job(nodes)
-        jobfile = f"openmpi-{nodes}.job"
-        write_job_file(jobfile, job)
-
-        job = native_job(nodes)
-        jobfile = f"native-{nodes}.job"
-        write_job_file(jobfile, job)
+    for variant in config.MPI_TYPES:
+        for nodes in config.NODE_SCALING:
+            job = make_job(nodes, variant)
+            jobfile = f"{variant}-{nodes}.job"
+            write_job_file(jobfile, job)

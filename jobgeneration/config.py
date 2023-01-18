@@ -14,7 +14,17 @@ RESULT_DIR = Path("results")
 BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
 
 MPI_TYPES = ['native', 'mpich', 'openmpi', 'mpich-bind']
-PROCESSES = [8, 16, 32]
+
+NODE_SCALING = {
+    8: {"nx": 4, "ny": 2},
+    16: {"nx": 4, "ny": 4},
+    32: {"nx": 8, "ny": 4},
+    # 64: {"nx": 8, "ny": 8},
+}
+
+TASKS_PER_NODE = 1
+
+PROCESSES = list(NODE_SCALING.keys())
 
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)
