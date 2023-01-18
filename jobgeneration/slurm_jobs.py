@@ -66,6 +66,11 @@ APPCMD_BY_VARIANT = {
     "native": NATIVE_CMD,
 }
 
+def get_mpi_cmd(n: int, variant: str) -> str:
+    if variant == "openmpi":
+        return MPICMD_BY_VARIANT[variant].format(nodes=n)
+    return MPICMD_BY_VARIANT[variant]
+
 def get_bind_opt(variant: str) -> str:
     if "bind" in variant:
         return SINGULARITY_BIND_OPT.format(bind=MPI_DIR)
@@ -85,7 +90,7 @@ def make_job(nodes: int, variant: str) -> Job:
         workdir=f"{variant}-{nodes}",
         output=f"{variant}-{nodes}.out",
         modules=" ".join(MODULES_BY_VARIANT[variant]),
-        mpicmd=MPICMD_BY_VARIANT[variant],
+        mpicmd=get_mpi_cmd(nodes, variant),
         buildcmd=get_build_cmd(variant),
         app=APPCMD_BY_VARIANT[variant].format(
             image=IMAGES_BY_VARIANT[variant],

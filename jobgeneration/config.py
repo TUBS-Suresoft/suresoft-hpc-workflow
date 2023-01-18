@@ -3,6 +3,7 @@ from pathlib import Path
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 ROCKET_TEMPLATE_PATH = TEMPLATES_DIR / "rocket.yml.j2"
 SLURM_JOB_TEMPLATE_PATH = TEMPLATES_DIR / "laplace.job.j2"
+BENCHMARK_CI_TEMPLATE = TEMPLATES_DIR / "benchmark-ci.yml.j2"
 
 GENERATED_DIR = Path("generated")
 SLURM_JOB_DIR = GENERATED_DIR / "slurmjobs"
@@ -12,6 +13,7 @@ BENCHMARK_GRAPH_FILE =  GENERATED_DIR / "graph.txt"
 
 RESULT_DIR = Path("results")
 BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
+
 
 MPI_TYPES = ['native', 'mpich', 'openmpi', 'mpich-bind']
 

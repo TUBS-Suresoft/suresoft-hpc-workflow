@@ -1,0 +1,57 @@
+stages: 
+  - benchmark
+
+.benchmark:
+  stage: benchmark
+  image: python:3.10
+  before_script:
+    - pip install hpc-rocket==0.4.0
+
+{% for hpc_rocket_job in hpc_rocket_jobs %}
+benchmark:{{ hpc_rocket_job.filepath.stem }}:
+  extends: .benchmark
+
+  script:
+    - hpc-rocket launch {{ hpc_rocket_job.filepath }} |& tee hpcrocket.log
+    - hpc-rocket watch {{ hpc_rocket_job.filepath }} $(python parsejobid.py hpcrocket.log)
+    - hpc-rocket finalize {{ hpc_rocket_job.filepath }}
+    - cat results/{{ hpc_rocket_job.extended_name }}.out
+
+  after_script:
+    - hpc-rocket cancel {{ hpc_rocket_job.filepath }} $(python parsejobid.py hpcrocket.log)
+
+  artifacts:
+    expire_in: 1 hrs
+    paths:
+      - results/
+
+  needs:
+    - pipeline: $PARENT_PIPELINE_ID
+      job: create-benchmark-ci
+    {% if "native" not in hpc_rocket_job.name -%}
+    - pipeline: $PARENT_PIPELINE_ID
+      job: build-singularity-container-{{ hpc_rocket_job.name }}
+    {% endif %}
+{% endfor %}
+
+create_graph:
+  stage: benchmark
+  image: python:3.10
+
+  before_script:
+    - pip install -r jobgeneration/requirements.txt
+
+  script:
+    - python3 -m jobgeneration plot
+
+  artifacts:
+    expire_in: 1 week
+    paths:
+        - results/*.out
+        - results/*.png
+
+  needs: 
+    {% for hpc_rocket_job in hpc_rocket_jobs -%}
+    - benchmark:{{ hpc_rocket_job.filepath.stem }}
+    {% endfor %}
+    

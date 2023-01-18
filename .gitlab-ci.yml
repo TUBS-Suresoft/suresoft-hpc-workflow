@@ -11,7 +11,7 @@ stages:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build_singularity_container_mpich:
+build-singularity-container-mpich:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -51,7 +51,7 @@ build_singularity_container_mpich:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build_singularity_container_openmpi:
+build-singularity-container-openmpi:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -89,7 +89,7 @@ build_singularity_container_openmpi:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build_singularity_container_mpich_bind:
+build-singularity-container-mpich-bind:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -129,7 +129,7 @@ build_singularity_container_mpich_bind:
 # to the cluster, submits a slurm job and copies data back
 # Output: result data located in results/
 ###############################################################################
-run_hpc_cluster_mpich_bind:
+run-hpc-cluster-mpich-bind:
   image: python:3.10
 
   stage: simulation
@@ -158,12 +158,12 @@ run_hpc_cluster_mpich_bind:
 # Fieldcompare compares the in the last job produced data from results/
 # with a set of reference files located in reference_data/
 ###############################################################################
-regression_test:
+regression-test:
   image: python:3.10
 
   stage: test
 
-  needs: ["run_hpc_cluster_mpich_bind"]
+  needs: ["run-hpc-cluster-mpich-bind"]
 
   before_script:
     - pip install "fieldcompare[all]"
@@ -174,7 +174,7 @@ regression_test:
 ###############################################################################
 # Manually trigger the benchmark child pipeline
 ###############################################################################
-create_benchmark_ci:
+create-benchmark-ci:
   image: python:3.10
   stage: benchmark
 
@@ -191,19 +191,19 @@ create_benchmark_ci:
   when: manual
   needs:
     [
-      build_singularity_container_mpich,
-      build_singularity_container_mpich_bind,
-      build_singularity_container_openmpi,
+      build-singularity-container-mpich,
+      build-singularity-container-mpich-bind,
+      build-singularity-container-openmpi,
     ]
 
 trigger:benchmark:
   stage: benchmark
   needs:
-    - create_benchmark_ci
+    - create-benchmark-ci
   trigger:
     include:
       - artifact: generated/benchmark-gitlab-ci.yml
-        job: create_benchmark_ci
+        job: create-benchmark-ci
     strategy: depend
   variables:
     PARENT_PIPELINE_ID: $CI_PIPELINE_ID
