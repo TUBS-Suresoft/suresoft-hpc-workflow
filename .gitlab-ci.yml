@@ -134,7 +134,7 @@ run-hpc-cluster-mpich-bind:
 
   stage: simulation
 
-  needs: ["build_singularity_container_mpich_bind"]
+  needs: ["build-singularity-container-mpich-bind"]
 
   before_script:
     - pip install hpc-rocket==0.4.0
