@@ -7,7 +7,7 @@ from jobgeneration import config
 def create_graph() -> None:
     output = ""
 
-    configs = ['native', 'mpich', 'openmpi', 'mpi-bind']
+    configs = ['native', 'mpich', 'openmpi', 'mpich-bind']
     processes = [8, 16, 32]
 
     for cfg in configs:
