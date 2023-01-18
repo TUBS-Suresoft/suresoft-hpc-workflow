@@ -30,13 +30,13 @@ The workflow is grouped into four [stages](.gitlab-ci.yml) in the Continuous Int
    - Runs a regression test with [fieldcompare](https://gitlab.com/dglaeser/fieldcompare) to compare the results of the simulation stage with reference data.
 
 
-<img src="img/ci-stages.png" style="margin: 3em;"/>
+<img src="img/ci-stages.svg" style="margin: 3em;"/>
 
 
 4. **benchmark**
    - Dynamically generates additional CI jobs to benchmark the performance of the different MPI approaches.
 
-<img src="img/ci-stages-benchmark.png" style="margin: 3em;"/>
+<img src="img/ci-stages-benchmark.svg" style="margin: 3em;"/>
 
 ### Singularity Images
 
@@ -53,7 +53,7 @@ This results in a performance on par with a native solution.
 However, the portability of the container is reduced, since the application must be compiled with the same MPI version that is used on the host machine.
 
 <div style="margin: 3em; display: flex; gap: 5em;">
-   <img src="img/multistagebuild_bind.png" width="300"> <img src="img/multistagebuild_hybrid.png" width="300">
+   <img src="img/multistagebuild_bind.svg" width="300"> <img src="img/multistagebuild_hybrid.svg" width="300">
 </div>
 
 
@@ -61,7 +61,7 @@ However, the portability of the container is reduced, since the application must
 HPC Rocket is a commandline tool to send slurm commands to a remote machine and monitor the job progress. 
 It was primarily written to launch slurm jobs from a CI pipeline.
 
-<img src="img/hpc-rocket.png" width="600">
+<img src="img/hpc-rocket.svg" width="600">
 
 ### Fieldcompare
 `fieldcompare` is a Python package with command-line interface (CLI) that can be used to compare
