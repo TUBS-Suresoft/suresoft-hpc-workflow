@@ -38,7 +38,7 @@ def get_rocket_config(variant: RuntimeVariant, nodes: int) -> Rocket:
 
     return Rocket(
         copy_instructions=[
-            copy(jobfile, remote_dir, "laplace.job"),
+            copy(jobfile, remote_dir),
             *variant_files,
         ],
         collect_instructions=[
