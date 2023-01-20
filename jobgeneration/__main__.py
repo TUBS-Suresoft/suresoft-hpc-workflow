@@ -1,4 +1,11 @@
-from jobgeneration import config, slurm_jobs, hpc_rocket_files, benchmark_ci, benchmark_plot
+from jobgeneration import (
+    config,
+    slurm_jobs,
+    hpc_rocket_files,
+    benchmark_ci,
+    benchmark_plot,
+    variants,
+)
 from jobgeneration.logging import configure_logging
 import sys
 

@@ -11,7 +11,7 @@ stages:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build-singularity-container-mpich:
+build-singularity-mpich-hybrid:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -19,7 +19,7 @@ build-singularity-container-mpich:
   stage: build
 
   variables:
-    SINGULARITY_IMAGE: "Containers/rockylinux9-mpich.sif"
+    SINGULARITY_IMAGE: "Containers/rockylinux9-mpich-hybrid.sif"
 
   tags:
     - linux
@@ -33,7 +33,7 @@ build-singularity-container-mpich:
   cache:
     key:
       files:
-        - Containers/rockylinux9-mpich.def
+        - Containers/rockylinux9-mpich-hybrid.def
     paths:
       - $SINGULARITY_IMAGE
 
@@ -43,7 +43,7 @@ build-singularity-container-mpich:
         echo "Cached version of $SINGULARITY_IMAGE used. Clear cache to force rebuild."
         exit 0
       fi
-    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich.def"
+    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-mpich-hybrid.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
@@ -51,7 +51,7 @@ build-singularity-container-mpich:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build-singularity-container-openmpi:
+build-singularity-openmpi-hybrid:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -63,7 +63,7 @@ build-singularity-container-openmpi:
     - privileged
 
   variables:
-    SINGULARITY_IMAGE: "Containers/rockylinux9-openmpi.sif"
+    SINGULARITY_IMAGE: "Containers/rockylinux9-openmpi-hybrid.sif"
 
   artifacts:
     expire_in: 1 hrs
@@ -81,7 +81,7 @@ build-singularity-container-openmpi:
         echo "Cached version of $SINGULARITY_IMAGE used. Clear cache to force rebuild."
         exit 0
       fi
-    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-openmpi.def"
+    - singularity build "$SINGULARITY_IMAGE" "Containers/rockylinux9-openmpi-hybrid.def"
 
 ###############################################################################
 # 1. builds the singularity container using a docker container
@@ -89,7 +89,7 @@ build-singularity-container-openmpi:
 # Input: Containers/rockylinux9-mpich.def
 # Output: Containers/rockylinux9-mpich.sif
 ###############################################################################
-build-singularity-container-mpich-bind:
+build-singularity-mpich-bind:
   image:
     name: quay.io/singularity/singularity:v3.10.4
     entrypoint: [""]
@@ -134,7 +134,7 @@ run-hpc-cluster-mpich-bind:
 
   stage: simulation
 
-  needs: ["build-singularity-container-mpich-bind"]
+  needs: ["build-singularity-mpich-bind"]
 
   before_script:
     - pip install hpc-rocket==0.4.0
@@ -191,9 +191,9 @@ create-benchmark-ci:
   when: manual
   needs:
     [
-      build-singularity-container-mpich,
-      build-singularity-container-mpich-bind,
-      build-singularity-container-openmpi,
+      build-singularity-mpich-hybrid,
+      build-singularity-mpich-bind,
+      build-singularity-openmpi-hybrid,
     ]
 
 trigger:benchmark:

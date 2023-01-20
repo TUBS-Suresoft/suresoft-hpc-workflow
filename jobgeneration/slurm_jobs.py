@@ -1,7 +1,10 @@
 import logging
+from typing import Dict, Type, TypedDict
 from jobgeneration import config
 from dataclasses import asdict, dataclass
 from jinja2 import Template
+
+from jobgeneration.variants import NativeVariant, RuntimeVariant, SingularityVariant
 
 JOB_TEMPLATE: Template = Template(config.SLURM_JOB_TEMPLATE_PATH.read_text())
 
@@ -9,21 +12,38 @@ MPICH_RUN_MODULES = ["singularity/3.9.9", "mpi/mpich/mpich_3.2"]
 OPENMPI_RUN_MODULES = ["singularity/3.9.9", "mpi/openmpi/4.10/4.10"]
 NATIVE_RUN_MODULES = ["mpi/mpich/mpich_3.2", "comp/gcc/9.3.0", "comp/cmake/3.25.0"]
 
-SRUN = "srun --mpi=pmi2"
-MPIRUN = "mpirun -np {nodes}"
 
+MPI_DIR = "/cluster/mpi/mpich"
 SINGULARITY_CMD = "singularity exec {bind} {image} /build/bin/laplace {nx} {ny}"
 SINGULARITY_BIND_OPT = "--bind {bind}"
 
 NATIVE_CMD = "build/bin/laplace {nx} {ny}"
-
-MPICH_IMG = "rockylinux9-mpich.sif"
-MPICH_BIND_IMG = "rockylinux9-mpich-bind.sif"
-OPENMPI_IMG = "rockylinux9-openmpi.sif"
-
-MPI_DIR = "/cluster/mpi/mpich"
-
 NATIVE_BUILD_CMD = "mkdir -p build && cd build && cmake .. && make -j4 && cd .."
+
+
+VARIANT_BASED_MODULES = {
+    SingularityVariant: ["singularity/3.9.9"],
+    NativeVariant: ["comp/gcc/9.3.0", "comp/cmake/3.25.0"],
+}
+
+MPI_BASED_MODULES = {
+    "mpich": ["mpi/mpich/mpich_3.2"],
+    "openmpi": ["mpi/openmpi/4.10/4.10"],
+}
+
+APPCMD_BY_VARIANT = {
+    SingularityVariant: SINGULARITY_CMD,
+    NativeVariant: NATIVE_CMD,
+}
+
+
+def get_modules(variant: RuntimeVariant) -> list[str]:
+    return [
+        # NOTE: We have to load MPI before the variant based modules,
+        # because CMake causes a build error if the necessary modules are not available when it's loaded.
+        *MPI_BASED_MODULES[variant.mpi.name],
+        *VARIANT_BASED_MODULES[type(variant)],
+    ]
 
 
 @dataclass
@@ -38,66 +58,45 @@ class Job:
     buildcmd: str = ""
 
 
-MODULES_BY_VARIANT = {
-    "mpich": MPICH_RUN_MODULES,
-    "mpich-bind": MPICH_RUN_MODULES,
-    "openmpi": OPENMPI_RUN_MODULES,
-    "native": NATIVE_RUN_MODULES,
-}
-
-IMAGES_BY_VARIANT = {
-    "mpich": MPICH_IMG,
-    "mpich-bind": MPICH_BIND_IMG,
-    "openmpi": OPENMPI_IMG,
-    "native": "",
-}
-
-MPICMD_BY_VARIANT = {
-    "mpich": SRUN,
-    "mpich-bind": SRUN,
-    "openmpi": MPIRUN,
-    "native": SRUN,
-}
-
-APPCMD_BY_VARIANT = {
-    "mpich": SINGULARITY_CMD,
-    "mpich-bind": SINGULARITY_CMD,
-    "openmpi": SINGULARITY_CMD,
-    "native": NATIVE_CMD,
-}
-
-def get_mpi_cmd(n: int, variant: str) -> str:
-    if variant == "openmpi":
-        return MPICMD_BY_VARIANT[variant].format(nodes=n)
-    return MPICMD_BY_VARIANT[variant]
-
-def get_bind_opt(variant: str) -> str:
-    if "bind" in variant:
+def get_bind_opt(variant: RuntimeVariant) -> str:
+    if isinstance(variant, SingularityVariant) and variant.mpi_approach == "bind":
         return SINGULARITY_BIND_OPT.format(bind=MPI_DIR)
 
     return ""
 
-def get_build_cmd(variant: str) -> str:
-    if variant == "native":
+
+def get_app_cmd(variant: RuntimeVariant, nodes: int) -> str:
+    app_cmd = APPCMD_BY_VARIANT[type(variant)]
+
+    if isinstance(variant, SingularityVariant):
+        return app_cmd.format(
+            image=variant.image.name,
+            bind=get_bind_opt(variant),
+            **config.NODE_SCALING[nodes],
+        )
+
+    return app_cmd.format(**config.NODE_SCALING[nodes])
+
+
+def get_build_cmd(variant: RuntimeVariant) -> str:
+    if isinstance(variant, NativeVariant):
         return NATIVE_BUILD_CMD
 
     return ""
 
-def make_job(nodes: int, variant: str) -> Job:
+
+def make_job(nodes: int, variant: RuntimeVariant) -> Job:
     return Job(
         nodes=nodes,
         ntasks_per_node=config.TASKS_PER_NODE,
-        workdir=f"{variant}-{nodes}",
-        output=f"{variant}-{nodes}.out",
-        modules=" ".join(MODULES_BY_VARIANT[variant]),
-        mpicmd=get_mpi_cmd(nodes, variant),
+        workdir=f"{variant.runtime_approach}-{nodes}",
+        output=f"{variant.runtime_approach}-{nodes}.out",
+        modules=" ".join(get_modules(variant)),
+        mpicmd=variant.mpi.command(nodes),
         buildcmd=get_build_cmd(variant),
-        app=APPCMD_BY_VARIANT[variant].format(
-            image=IMAGES_BY_VARIANT[variant],
-            bind=get_bind_opt(variant),
-            **config.NODE_SCALING[nodes],
-        ),
+        app=get_app_cmd(variant, nodes),
     )
+
 
 def format_job_content(job: Job) -> str:
     partition = "shortrun_small" if job.nodes <= 50 else "shortrun_large"
@@ -112,8 +111,8 @@ def write_job_file(jobfilename: str, job: Job) -> None:
 
 
 def create() -> None:
-    for variant in config.MPI_TYPES:
+    for variant in config.VARIANTS:
         for nodes in config.NODE_SCALING:
             job = make_job(nodes, variant)
-            jobfile = f"{variant}-{nodes}.job"
+            jobfile = f"{variant.runtime_approach}-{nodes}.job"
             write_job_file(jobfile, job)

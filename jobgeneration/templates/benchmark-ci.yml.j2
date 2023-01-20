@@ -8,17 +8,17 @@ stages:
     - pip install hpc-rocket==0.4.0
 
 {% for hpc_rocket_job in hpc_rocket_jobs %}
-benchmark:{{ hpc_rocket_job.filepath.stem }}:
+benchmark:{{ hpc_rocket_job.configpath.stem }}:
   extends: .benchmark
 
   script:
-    - hpc-rocket launch {{ hpc_rocket_job.filepath }} |& tee hpcrocket.log
-    - hpc-rocket watch {{ hpc_rocket_job.filepath }} $(python parsejobid.py hpcrocket.log)
-    - hpc-rocket finalize {{ hpc_rocket_job.filepath }}
+    - hpc-rocket launch {{ hpc_rocket_job.configpath }} |& tee hpcrocket.log
+    - hpc-rocket watch {{ hpc_rocket_job.configpath }} $(python parsejobid.py hpcrocket.log)
+    - hpc-rocket finalize {{ hpc_rocket_job.configpath }}
     - cat results/{{ hpc_rocket_job.extended_name }}.out
 
   after_script:
-    - hpc-rocket cancel {{ hpc_rocket_job.filepath }} $(python parsejobid.py hpcrocket.log)
+    - hpc-rocket cancel {{ hpc_rocket_job.configpath }} $(python parsejobid.py hpcrocket.log)
 
   artifacts:
     expire_in: 1 hrs
@@ -30,7 +30,7 @@ benchmark:{{ hpc_rocket_job.filepath.stem }}:
       job: create-benchmark-ci
     {% if "native" not in hpc_rocket_job.name -%}
     - pipeline: $PARENT_PIPELINE_ID
-      job: build-singularity-container-{{ hpc_rocket_job.name }}
+      job: build-{{ hpc_rocket_job.name }}
     {% endif %}
 {% endfor %}
 
@@ -52,6 +52,6 @@ create_graph:
 
   needs: 
     {% for hpc_rocket_job in hpc_rocket_jobs -%}
-    - benchmark:{{ hpc_rocket_job.filepath.stem }}
+    - benchmark:{{ hpc_rocket_job.configpath.stem }}
     {% endfor %}
     

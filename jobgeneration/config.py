@@ -1,4 +1,12 @@
 from pathlib import Path
+from jobgeneration.mpi import OpenMPI, Srun
+
+from jobgeneration.variants import (
+    NativeVariant,
+    RuntimeVariant,
+    SingularityVariant,
+)
+
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 ROCKET_TEMPLATE_PATH = TEMPLATES_DIR / "rocket.yml.j2"
@@ -11,11 +19,16 @@ ROCKET_CONFIG_DIR = GENERATED_DIR / "hpc-rocket"
 BENCHMARK_CI_FILE = GENERATED_DIR / "benchmark-gitlab-ci.yml"
 
 RESULT_DIR = Path("results")
-BENCHMARK_GRAPH_IMAGE =  RESULT_DIR / "benchmark.png"
-BENCHMARK_GRAPH_FILE =  RESULT_DIR / "graph_data.out"
+BENCHMARK_GRAPH_IMAGE = RESULT_DIR / "benchmark.png"
+BENCHMARK_GRAPH_FILE = RESULT_DIR / "graph_data.out"
 
 
-MPI_TYPES = ['native', 'mpich', 'openmpi', 'mpich-bind']
+VARIANTS: list[RuntimeVariant] = [
+    NativeVariant(mpi=Srun(name="mpich")),
+    SingularityVariant(mpi=OpenMPI(), mpi_approach="hybrid"),
+    SingularityVariant(mpi=Srun("mpich"), mpi_approach="hybrid"),
+    SingularityVariant(mpi=Srun("mpich"), mpi_approach="bind"),
+]
 
 NODE_SCALING = {
     8: {"nx": 4, "ny": 2},
@@ -25,8 +38,8 @@ NODE_SCALING = {
 }
 
 TASKS_PER_NODE = 1
-
 PROCESSES = list(NODE_SCALING.keys())
+
 
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)

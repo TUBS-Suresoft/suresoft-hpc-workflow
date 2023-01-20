@@ -8,10 +8,10 @@ from jobgeneration import config
 def create() -> None:
     output = ""
 
-    for cfg in config.MPI_TYPES:
+    for variant in config.VARIANTS:
         y = []
         for process in config.PROCESSES:
-            path = f"results/{cfg}-{process}.out"
+            path = f"results/{variant.runtime_approach}-{process}.out"
             p = Path(path)
             if not p.exists():
                 logging.warning(f"skip {path} - does not exist")
@@ -19,8 +19,8 @@ def create() -> None:
             output += str(path)
             output += "; "
 
-            content = p.read_text()
-            content = content.split("\n")
+            log_content = p.read_text()
+            content = log_content.splitlines()
             for line in content:
                 if line.startswith("Average MNUPS"):
                     nups = re.findall(r'\d+', line)
@@ -30,9 +30,9 @@ def create() -> None:
 
         if len(y) != 3:
             continue
-        logging.info("Plot " + cfg)
-        line, = plt.plot(config.PROCESSES, y)
-        line.set_label(cfg)
+        logging.info("Plot " + variant.runtime_approach)
+        plot_line, = plt.plot(config.PROCESSES, y)
+        plot_line.set_label(variant.runtime_approach)
         plt.legend()
 
     plt.xticks(config.PROCESSES)
