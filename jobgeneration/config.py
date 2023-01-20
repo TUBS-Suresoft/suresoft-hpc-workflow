@@ -1,5 +1,6 @@
 from pathlib import Path
 from jobgeneration.mpi import OpenMPI, Srun
+from jobgeneration.nodescaling import node_scale_for
 
 from jobgeneration.variants import (
     NativeVariant,
@@ -30,12 +31,13 @@ VARIANTS: list[RuntimeVariant] = [
     SingularityVariant(mpi=Srun("mpich"), mpi_approach="bind"),
 ]
 
-NODE_SCALING = {
-    8: {"nx": 4, "ny": 2},
-    16: {"nx": 4, "ny": 4},
-    32: {"nx": 8, "ny": 4},
-    # 64: {"nx": 8, "ny": 8},
-}
+NODES = [8, 16, 32]
+
+NODE_SCALING = {}
+for n in NODES:
+    nx, ny = node_scale_for(n)
+    NODE_SCALING[n] = {"nx": nx, "ny": ny}
+
 
 TASKS_PER_NODE = 1
 PROCESSES = list(NODE_SCALING.keys())
