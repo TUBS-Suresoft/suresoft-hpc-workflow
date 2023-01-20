@@ -39,8 +39,10 @@ APPCMD_BY_VARIANT = {
 
 def get_modules(variant: RuntimeVariant) -> list[str]:
     return [
-        *VARIANT_BASED_MODULES[type(variant)],
+        # NOTE: We have to load MPI before the variant based modules,
+        # because CMake causes a build error if the necessary modules are not available when it's loaded.
         *MPI_BASED_MODULES[variant.mpi.name],
+        *VARIANT_BASED_MODULES[type(variant)],
     ]
 
 
