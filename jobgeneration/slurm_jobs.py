@@ -86,15 +86,18 @@ def get_build_cmd(variant: RuntimeVariant) -> str:
 
 
 def make_job(nodes: int, variant: RuntimeVariant) -> Job:
+    processes = nodes * config.TASKS_PER_NODE
+    logging.info(f"Using node scaling: {config.NODE_SCALING}")
+
     return Job(
         nodes=nodes,
         ntasks_per_node=config.TASKS_PER_NODE,
-        workdir=f"{variant.runtime_approach}-{nodes}",
-        output=f"{variant.runtime_approach}-{nodes}.out",
+        workdir=f"{variant.runtime_approach}-{processes}",
+        output=f"{variant.runtime_approach}-{processes}.out",
         modules=" ".join(get_modules(variant)),
-        mpicmd=variant.mpi.command(nodes),
+        mpicmd=variant.mpi.command(processes),
         buildcmd=get_build_cmd(variant),
-        app=get_app_cmd(variant, nodes),
+        app=get_app_cmd(variant, processes),
     )
 
 
@@ -112,7 +115,7 @@ def write_job_file(jobfilename: str, job: Job) -> None:
 
 def create() -> None:
     for variant in config.VARIANTS:
-        for nodes in config.NODE_SCALING:
+        for nodes in config.NODES:
             job = make_job(nodes, variant)
-            jobfile = f"{variant.runtime_approach}-{nodes}.job"
+            jobfile = f"{variant.runtime_approach}-{nodes * config.TASKS_PER_NODE}.job"
             write_job_file(jobfile, job)

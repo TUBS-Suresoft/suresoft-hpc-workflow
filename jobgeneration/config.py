@@ -2,6 +2,7 @@ from pathlib import Path
 from jobgeneration.mpi import OpenMPI, Srun
 from jobgeneration.nodescaling import node_scale_for
 
+
 from jobgeneration.variants import (
     NativeVariant,
     RuntimeVariant,
@@ -31,17 +32,15 @@ VARIANTS: list[RuntimeVariant] = [
     SingularityVariant(mpi=Srun("mpich"), mpi_approach="bind"),
 ]
 
+TASKS_PER_NODE = 2
 NODES = [8, 16, 32]
 
+PROCESSES = [TASKS_PER_NODE * n for n in NODES]
+
 NODE_SCALING = {}
-for n in NODES:
+for n in PROCESSES:
     nx, ny = node_scale_for(n)
     NODE_SCALING[n] = {"nx": nx, "ny": ny}
-
-
-TASKS_PER_NODE = 1
-PROCESSES = list(NODE_SCALING.keys())
-
 
 def ensure_dirs() -> None:
     SLURM_JOB_DIR.mkdir(parents=True, exist_ok=True)
