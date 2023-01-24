@@ -32,8 +32,8 @@ VARIANTS: list[RuntimeVariant] = [
     SingularityVariant(mpi=Srun("mpich"), mpi_approach="bind"),
 ]
 
-TASKS_PER_NODE = 2
-NODES = [8, 16, 32]
+TASKS_PER_NODE = 4
+NODES = [2, 4, 8]
 
 PROCESSES = [TASKS_PER_NODE * n for n in NODES]
 
