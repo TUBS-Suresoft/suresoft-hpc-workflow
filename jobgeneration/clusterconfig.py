@@ -24,7 +24,7 @@ CLUSTER_CONFIGS = {
         },
         mpi_configs={
             "mpich": MPIConfig(modules=["mpi/mpich/mpich_3.2"], dir="/cluster/mpi/mpich"),
-            "openmpi": MPIConfig(modules=["mpi/openmpi/4.10/4.10"], dir="/cluster/mpi/mpich"),
+            "openmpi": MPIConfig(modules=["mpi/openmpi/4.10/4.10"], dir="/cluster/mpi/openmpi/4.10_gcc/build/"),
         }
     )
 }
