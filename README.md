@@ -2,7 +2,7 @@
 
 [![Matrix](https://img.shields.io/matrix/suresoft-general:matrix.org?server_fqdn=matrix.org)](https://matrix.to/#/#suresoft-general:matrix.org)
 [![pipeline status](https://git.rz.tu-bs.de/soe.peters/suresoft-hpc-workflow/badges/main/pipeline.svg)](https://git.rz.tu-bs.de/soe.peters/suresoft-hpc-workflow/-/commits/main)
-
+[![DOI](https://zenodo.org/badge/590527614.svg)](https://zenodo.org/badge/latestdoi/590527614)
 
 [<img src="img/SURESOFT-Logo.png" width="250"/>](img/SURESOFT-Logo.png)
 
