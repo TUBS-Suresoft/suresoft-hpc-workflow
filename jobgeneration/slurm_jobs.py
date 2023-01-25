@@ -47,7 +47,7 @@ class Job:
 
 def get_bind_opt(cluster_config: ClusterConfig, variant: RuntimeVariant) -> str:
     if isinstance(variant, SingularityVariant) and variant.mpi_approach == "bind":
-        return SINGULARITY_BIND_OPT.format(bind=cluster_config.mpi_configs[variant.mpi.name])
+        return SINGULARITY_BIND_OPT.format(bind=cluster_config.mpi_configs[variant.mpi.name].dir)
 
     return ""
 
