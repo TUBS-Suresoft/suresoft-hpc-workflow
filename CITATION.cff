@@ -13,6 +13,7 @@ authors:
     orcid: https://orcid.org/0000-0002-2755-5087
 title: "SURESOFT HPC workflow"
 version: 0.1.0
+doi: 10.5281/zenodo.7568959
 license: MIT
 repository-code: "https://git.rz.tu-bs.de/soe.peters/suresoft-hpc-workflow"
 date-released: "2023-01-25"
