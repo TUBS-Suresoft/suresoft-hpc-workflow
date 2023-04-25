@@ -218,7 +218,7 @@ create-test-ci:
     - pip install -r jobgeneration/requirements.txt
 
   script:
-    - python3 -m jobgeneration/generate_test_ci.py
+    - python3 jobgeneration/generate_test_ci.py
 
   artifacts:
     expire_in: 1 week
