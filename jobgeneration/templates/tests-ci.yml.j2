@@ -7,6 +7,8 @@ deploy-singularity-mpich-bind:
 
   before_script:
     - apt-get update && apt-get install -y rsync
+    - chmod 700 $(dirname $PRIVATE_KEY)
+    - chmod 600 $PRIVATE_KEY
 
   script:
     - rsync -e "ssh -i $PRIVATE_KEY -o StrictHostKeyChecking=no" "Containers/rockylinux9-mpich-bind.sif" "$REMOTE_USER@$REMOTE_HOST:Containers/rockylinux9-mpich-bind.sif"
