@@ -234,7 +234,7 @@ trigger-test-ci:
     - create-test-ci
   trigger:
     include:
-      - artifact: generated/test-gitlab-ci.yml
+      - artifact: generated/tests-ci.yml
         job: create-test-ci
     strategy: depend
   variables:
