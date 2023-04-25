@@ -50,7 +50,7 @@ run-{{ test_case }}:
 
 assert-{{ test_case }}:
   stage: test
-  image: python3.10
+  image: python:3.10
   before_script:
     - pip install fieldcompare
     
