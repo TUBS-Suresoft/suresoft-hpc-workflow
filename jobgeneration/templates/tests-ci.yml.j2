@@ -34,7 +34,7 @@ run-{{ test_case }}:
     - hpc-rocket launch tests/rocket.yml |& tee hpcrocket.log
     - hpc-rocket watch tests/rocket.yml $(python parsejobid.py hpcrocket.log)
     - hpc-rocket finalize tests/rocket.yml
-    - cat results/{{ test_case }}.out
+    - cat results/laplace.out
 
   after_script:
     - hpc-rocket cancel tests/rocket.yml $(python parsejobid.py hpcrocket.log)
