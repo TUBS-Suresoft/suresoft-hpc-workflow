@@ -5,8 +5,11 @@ deploy-singularity-mpich-bind:
   stage: test
   image: python:3.10
 
+  before_script:
+    - apt-get update && apt-get install -y rsync
+
   script:
-   - rsync -e "ssh -i $PRIVATE_KEY" "Containers/rockylinux9-mpich-bind.sif" "$REMOTE_USER@$REMOTE_HOST:Containers/rockylinux9-mpich-bind.sif"
+    - rsync -e "ssh -i $PRIVATE_KEY" "Containers/rockylinux9-mpich-bind.sif" "$REMOTE_USER@$REMOTE_HOST:Containers/rockylinux9-mpich-bind.sif"
 
   needs:
     - pipeline: $PARENT_PIPELINE_ID
