@@ -207,3 +207,35 @@ trigger:benchmark:
     strategy: depend
   variables:
     PARENT_PIPELINE_ID: $CI_PIPELINE_ID
+
+
+##
+create-test-ci:
+  image: python:3.10
+  stage: test
+
+  before_script:
+    - pip install -r jobgeneration/requirements.txt
+
+  script:
+    - python3 -m jobgeneration/generate_test_ci.py
+
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - generated/
+  when: manual
+  needs: [build-singularity-mpich-bind]
+
+
+trigger-test-ci:
+  stage: test
+  needs:
+    - create-test-ci
+  trigger:
+    include:
+      - artifact: generated/test-gitlab-ci.yml
+        job: create-test-ci
+    strategy: depend
+  variables:
+    PARENT_PIPELINE_ID: $CI_PIPELINE_ID

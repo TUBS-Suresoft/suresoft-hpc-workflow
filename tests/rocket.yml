@@ -1,0 +1,25 @@
+host: $REMOTE_HOST
+user: $REMOTE_USER
+password: $REMOTE_PASSWORD
+
+copy:
+  - from: $TEST_CASE
+    to: $TEST_CASE/slurm.sh
+    overwrite: true
+
+
+collect:
+  - from: $TEST_CASE/results/*
+    to: results
+    overwrite: true
+
+  - from: $TEST_CASE/laplace.out
+    to: results
+    overwrite: true
+
+
+#clean:
+#  - laplace2d/*
+
+sbatch: $TEST_CASE/slurm.sh
+continue_if_job_fails: true
