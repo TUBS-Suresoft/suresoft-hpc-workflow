@@ -11,6 +11,7 @@ deploy-singularity-mpich-bind:
     - chmod 600 $PRIVATE_KEY
 
   script:
+    - ssh -i $PRIVATE_KEY -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST mkdir -p Containers
     - rsync -r -e "ssh -i $PRIVATE_KEY -o StrictHostKeyChecking=no" "Containers/rockylinux9-mpich-bind.sif" "$REMOTE_USER@$REMOTE_HOST:Containers/rockylinux9-mpich-bind.sif"
 
   needs:
