@@ -3,7 +3,7 @@ user: $REMOTE_USER
 password: $REMOTE_PASSWORD
 
 copy:
-  - from: $TEST_CASE
+  - from: tests/$TEST_CASE
     to: $TEST_CASE/slurm.sh
     overwrite: true
 
@@ -20,6 +20,7 @@ collect:
 
 #clean:
 #  - laplace2d/*
+
 
 sbatch: $TEST_CASE/slurm.sh
 continue_if_job_fails: true
