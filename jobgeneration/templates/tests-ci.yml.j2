@@ -25,7 +25,7 @@ run-{{ test_case }}:
   image: python:3.10
 
   variables:
-    TEST_SCRIPT: {{ test_case }}
+    TEST_CASE: {{ test_case }}
 
   before_script:
     - pip install hpc-rocket==0.4.0
