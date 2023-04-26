@@ -13,11 +13,11 @@ def build_regression_job_string(tests: list[str]) -> str:
     return template.render(test_cases=tests)
 
 
-def main():
+def create() -> None:
     tests_files = [item.stem for item in TEST_FILE_DIR.glob("*-test")]
     tests_ci_file = build_regression_job_string(tests_files)
     TEST_CI_FILE.write_text(tests_ci_file)
 
 if __name__ == "__main__":
     GENERATED_DIR.mkdir(parents=True, exist_ok=True)
-    main()
+    create()
