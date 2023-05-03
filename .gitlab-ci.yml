@@ -169,7 +169,7 @@ regression-test:
     - pip install "fieldcompare[all]"
 
   script:
-    - fieldcompare file results/TemperatureField.avs reference_data/TemperatureField.avs
+    - fieldcompare file results/TemperatureField.avs reference_data/highres-test.avs
 
 ###############################################################################
 # Manually trigger the benchmark child pipeline
@@ -215,7 +215,7 @@ create-test-ci:
   stage: test
 
   before_script:
-    - pip install Jinja2
+    - pip install -r jobgeneration/requirements.txt
 
   script:
     - python3 -m jobgeneration test
