@@ -1,8 +1,10 @@
 stages: 
-  - test
+  - build
+  - simulation
+  - verify
 
 deploy-singularity-mpich-bind:
-  stage: test
+  stage: build
   image: python:3.10
 
   before_script:
@@ -21,7 +23,7 @@ deploy-singularity-mpich-bind:
 
 {% for test_case in test_cases %}
 run-{{ test_case }}:
-  stage: test
+  stage: simulation
   image: python:3.10
 
   variables:
@@ -48,14 +50,14 @@ run-{{ test_case }}:
     - deploy-singularity-mpich-bind
 
 
-assert-{{ test_case }}:
-  stage: test
+verify-{{ test_case }}:
+  stage: verify
   image: python:3.10
   before_script:
     - pip install fieldcompare
     
   script:
-    - fieldcompare dir results reference_data --include-files "*.vtu"
+    - fieldcompare file results/TemperatureField.avs reference_data/{{ test_case }}.avs
 
   needs:
     - run-{{ test_case }}

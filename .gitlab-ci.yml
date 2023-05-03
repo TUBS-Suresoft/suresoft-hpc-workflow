@@ -215,7 +215,7 @@ create-test-ci:
   stage: test
 
   before_script:
-    - pip install -r jobgeneration/requirements.txt
+    - pip install Jinja2
 
   script:
     - python3 -m jobgeneration test
