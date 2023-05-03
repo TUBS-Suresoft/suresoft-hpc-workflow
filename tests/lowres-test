@@ -18,4 +18,4 @@ load_modules
 mkdir -p results
 
 export MPI_DIR="/cluster/mpi/mpich"
-srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" ~/Containers/rockylinux9-mpich-bind.sif /build/bin/laplace 1 1 128 128
+srun --mpi=pmi2 singularity exec --bind "$MPI_DIR" ~/Containers/rockylinux9-mpich-bind.sif /build/bin/laplace 2 2 128 128

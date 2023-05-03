@@ -54,7 +54,7 @@ verify-{{ test_case }}:
   stage: verify
   image: python:3.10
   before_script:
-    - pip install fieldcompare
+    - pip install "fieldcompare[all]"
     
   script:
     - fieldcompare file results/TemperatureField.avs reference_data/{{ test_case }}.avs
