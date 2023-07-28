@@ -1,23 +1,27 @@
 import logging
 import os
-import re
-from typing import Iterable
-from jobgeneration import config
-from pathlib import Path
 from dataclasses import asdict, dataclass
+from pathlib import Path
+
 from jinja2 import Template
 
+from jobgeneration import config
 from jobgeneration.variants import RuntimeVariant
 
-
 ROCKET_TEMPLATE = Template(config.ROCKET_TEMPLATE_PATH.read_text())
+
+
+@dataclass
+class Job:
+    script: str
+    source: str
 
 
 @dataclass
 class Rocket:
     copy_instructions: list[tuple[str, str]]
     collect_instructions: list[tuple[str, str]]
-    jobfile: str
+    job: Job
 
 
 def save_rocket_file(variant: RuntimeVariant, nodes: int) -> None:
@@ -38,7 +42,6 @@ def get_rocket_config(variant: RuntimeVariant, nodes: int) -> Rocket:
 
     return Rocket(
         copy_instructions=[
-            copy(jobfile, remote_dir),
             *variant_files,
         ],
         collect_instructions=[
@@ -47,7 +50,7 @@ def get_rocket_config(variant: RuntimeVariant, nodes: int) -> Rocket:
                 f"results/{logfilename}",
             ),
         ],
-        jobfile=f"{remote_dir}/{jobfile.name}",
+        job=Job(script=f"{remote_dir}/{jobfile.name}", source=str(jobfile)),
     )
 
 
