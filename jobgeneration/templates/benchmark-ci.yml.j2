@@ -5,7 +5,7 @@ stages:
   stage: benchmark
   image: python:3.10
   before_script:
-    - pip install hpc-rocket==0.4.0
+    - pip install hpc-rocket==0.6.0
 
 {% for hpc_rocket_job in hpc_rocket_jobs %}
 benchmark:{{ hpc_rocket_job.configpath.stem }}:
