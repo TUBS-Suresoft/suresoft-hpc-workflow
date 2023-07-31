@@ -137,16 +137,14 @@ run-hpc-cluster-mpich-bind:
   needs: ["build-singularity-mpich-bind"]
 
   before_script:
-    - pip install hpc-rocket==0.4.0
+    - pip install hpc-rocket==0.6.0
 
   script:
-    - hpc-rocket launch example/rocket-mpich-bind.yml |& tee hpcrocket.log
-    - hpc-rocket watch example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
-    - hpc-rocket finalize example/rocket-mpich-bind.yml
+    - hpc-rocket launch example/rocket-mpich-bind.yml --watch --save-jobid hpcrocket.log
     - cat results/laplace.out
 
   after_script:
-    - hpc-rocket cancel example/rocket-mpich-bind.yml $(python parsejobid.py hpcrocket.log)
+    - hpc-rocket cancel example/rocket-mpich-bind.yml --read-jobid-from hpcrocket.log
 
   artifacts:
     expire_in: 1 hrs

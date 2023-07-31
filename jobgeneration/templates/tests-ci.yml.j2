@@ -30,16 +30,14 @@ run-{{ test_case }}:
     TEST_CASE: {{ test_case }}
 
   before_script:
-    - pip install hpc-rocket==0.4.0
+    - pip install hpc-rocket==0.6.0
 
   script:
-    - hpc-rocket launch tests/rocket.yml |& tee hpcrocket.log
-    - hpc-rocket watch tests/rocket.yml $(python parsejobid.py hpcrocket.log)
-    - hpc-rocket finalize tests/rocket.yml
+    - hpc-rocket launch tests/rocket.yml --watch --save-jobid hpcrocket.log
     - cat results/laplace.out
 
   after_script:
-    - hpc-rocket cancel tests/rocket.yml $(python parsejobid.py hpcrocket.log)
+    - hpc-rocket cancel tests/rocket.yml --read-jobid-from hpcrocket.log
 
   artifacts:
     expire_in: 1 hrs

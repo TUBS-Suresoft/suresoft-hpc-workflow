@@ -16,8 +16,8 @@ collect:
     overwrite: true
 {% endfor %}
 
-#clean:
-#  - laplace2d/*
-
-sbatch: "{{ jobfile }}"
+sbatch:
+  script: "{{ job.script }}"
+  from: "{{ job.source }}"
+  overwrite: true
 continue_if_job_fails: true
